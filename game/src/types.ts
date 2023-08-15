@@ -6,7 +6,7 @@ export enum GameCommand {
 }
 
 export type Tableau = {
-  money: number[]
+  money: number
 }
 
 export type GameCommandStartParams = {
