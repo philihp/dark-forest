@@ -1,0 +1,121 @@
+{
+  "version": "0.1.0",
+  "name": "dark-forest-game",
+  "sideEffects": false,
+  "description": "Dark Forest board game logic",
+  "keywords": [
+    "boardgame",
+    "hathora"
+  ],
+  "homepage": "https://dark.kennerspiel.com",
+  "license": "GPL-3.0",
+  "author": {
+    "name": "Philihp Busby",
+    "email": "philihp@gmail.com",
+    "url": "https://philihp.com"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "jest",
+    "lint": "eslint --ext .ts src/",
+    "prepack": "npm run build",
+    "prepare": "cd .. && husky install game/.husky"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "/dist/",
+    "/src/",
+    "!/src/**/__tests__/*.test.ts"
+  ],
+  "dependencies": {
+    "fast-shuffle": "6.0.1",
+    "fn-pcg": "2.0.1",
+    "ramda": "0.29.0",
+    "ts-pattern": "5.0.5"
+  },
+  "devDependencies": {
+    "@philihp/eslint-config": "6.0.2",
+    "@philihp/prettier-config": "1.0.0",
+    "@tsconfig/node16": "16.1.0",
+    "@types/jest": "29.5.3",
+    "@types/ramda": "0.29.3",
+    "@typescript-eslint/eslint-plugin": "6.3.0",
+    "@typescript-eslint/parser": "6.3.0",
+    "eslint": "8.46.0",
+    "eslint-import-resolver-typescript": "3.6.0",
+    "eslint-plugin-import": "2.28.0",
+    "eslint-plugin-jest": "^27.2.3",
+    "eslint-plugin-prettier": "5.0.0",
+    "husky": "8.0.3",
+    "jest": "29.6.2",
+    "lint-staged": "13.2.3",
+    "prettier": "3.0.1",
+    "ts-jest": "29.1.1",
+    "typescript": "5.1.6"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "roots": [
+      "<rootDir>/src/"
+    ]
+  },
+  "lint-staged": {
+    "**/*.ts": [
+      "eslint --ext .ts --fix"
+    ]
+  },
+  "prettier": "@philihp/prettier-config",
+  "eslintConfig": {
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "project": "./tsconfig.json"
+    },
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "extends": [
+      "plugin:@typescript-eslint/recommended",
+      "@philihp"
+    ],
+    "settings": {
+      "react": {
+        "version": "9999"
+      },
+      "import/extensions": [
+        ".ts"
+      ],
+      "import/parsers": {
+        "@typescript-eslint/parser": [
+          ".ts"
+        ]
+      },
+      "import/resolver": {
+        "typescript": {},
+        "node": {
+          "extensions": [
+            ".ts"
+          ]
+        }
+      }
+    },
+    "rules": {
+      "@typescript-eslint/no-unused-vars": "off",
+      "class-methods-use-this": "off",
+      "default-case": "off",
+      "no-param-reassign": "off",
+      "no-restricted-syntax": "off",
+      "no-unused-vars": "off"
+    },
+    "overrides": [
+      {
+        "files": [
+          "**/__tests__/*"
+        ],
+        "rules": {
+          "@typescript-eslint/no-non-null-assertion": "off"
+        }
+      }
+    ]
+  }
+}
