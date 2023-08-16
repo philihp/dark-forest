@@ -1,0 +1,11 @@
+{
+  "name": "dark-forest-server",
+  "version": "0.0.1",
+  "type": "module",
+  "devDependencies": {
+    "typescript": "5.1.6"
+  },
+  "dependencies": {
+    "dark-forest-game": "0.1.1"
+  }
+}

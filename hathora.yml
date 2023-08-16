@@ -1,0 +1,37 @@
+types:
+  EngineUser:
+    id: UserId
+    name: string
+    picture: string
+  EngineFrame:
+    activePlayerIndex: int
+  EngineTableau:
+    money: int
+  EngineControl:
+    partial: string?
+    completion: string[]?
+  EngineState:
+    users: EngineUser[]
+    me: EngineUser?
+    moves: string[]
+    players: EngineTableau[]?
+    control: EngineControl?
+
+methods:
+  join:
+    picture: string
+    name: string
+  start: {}
+  move:
+    command: string
+  control:
+    partial: string
+  undo: {}
+  redo: {}
+
+auth:
+  google:
+    clientId: 843500347511-jd10djb45kpf7r9gl6hial3mbds03o2f.apps.googleusercontent.com
+
+userState: EngineState
+error: string
