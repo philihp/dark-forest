@@ -7,7 +7,7 @@ describe('commands/start', () => {
       {
         ...initialState,
       },
-      { seed: 1 }
+      { seed: 1, sols: 0 }
     )
     expect(dst).toBeDefined()
   })
@@ -17,8 +17,18 @@ describe('commands/start', () => {
       {
         ...initialState,
       },
-      { seed: undefined }
+      { seed: undefined, sols: 0 }
     )
     expect(dst).toBeDefined()
+  })
+
+  it('creates an array of sols when started', () => {
+    const dst = start(
+      {
+        ...initialState,
+      },
+      { sols: 10 }
+    )
+    expect(dst?.sols).toHaveLength(10)
   })
 })

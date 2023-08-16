@@ -1,7 +1,7 @@
 import { identity } from 'ramda'
 import { reducer } from '../reducer'
 import { initialState } from '../state'
-import { start, commit } from '../commands'
+import { start } from '../commands'
 
 jest.mock('../commands', () => {
   return {
@@ -27,17 +27,14 @@ describe('reducer', () => {
     })
   })
 
-  describe('commit', () => {
-    it('calls commit', () => {
-      reducer(s0, ['COMMIT'])!
-      expect(commit).toHaveBeenCalled()
-    })
-  })
-
   describe('start', () => {
-    it('calls start', () => {
-      reducer(s0, ['START', '42', 'R', 'G', 'B'])!
-      expect(start).toHaveBeenCalled()
+    it('calls start with sols and seed', () => {
+      reducer(s0, ['START', '100', '42'])!
+      expect(start).toHaveBeenCalledWith(initialState, { seed: 42, sols: 100 })
+    })
+    it('calls start with sols if seed missing', () => {
+      reducer(s0, ['START', '100'])!
+      expect(start).toHaveBeenCalledWith(initialState, { seed: undefined, sols: 100 })
     })
   })
 })

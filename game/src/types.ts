@@ -10,14 +10,20 @@ export type Tableau = {
 }
 
 export type GameCommandStartParams = {
+  sols: number
   seed?: number
 }
 
 export type GameActionCommit = { command: GameCommand.COMMIT }
 
+export type Sol = {
+  owner?: number
+}
+
 export type GameState = {
   randGen?: PCGState
   players: Tableau[]
+  sols: Sol[]
 }
 
 export type StateReducer = (state: GameState) => GameState | undefined
