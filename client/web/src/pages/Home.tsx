@@ -85,7 +85,7 @@ const Home = () => {
         </button>
       </p>
       <hr />
-      Dark Forest, made with &heart; in San Francisco.
+      Dark Forest, made with ♥ in San Francisco.
     </>
   )
 }
