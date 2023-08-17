@@ -20,6 +20,7 @@ export const start = (
   sols: map(
     (): Sol => ({
       owner: undefined,
+      path: [],
     }),
     range(0, sols)
   ),

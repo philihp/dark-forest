@@ -13,6 +13,7 @@ describe('commands/start', () => {
   it('spawning on a system that doesnt exist is undefined', () => {
     const o1 = {
       owner: undefined,
+      path: [],
     } as Sol
     const s1 = {
       ...initialState,
@@ -25,10 +26,11 @@ describe('commands/start', () => {
     const player = 1
     const o1 = {
       owner: undefined,
+      path: [],
     } as Sol
     const s1 = {
       ...initialState,
-      sols: [o1, o1, { owner: player }, o1],
+      sols: [o1, o1, { owner: player, path: [] }, o1],
     }
     const s2 = spawn(s1, { sol: 1, player })
     expect(s2).toBeUndefined()

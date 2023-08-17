@@ -3,6 +3,7 @@ import { GameState } from './types'
 
 export const initialState: GameState = {
   randGen: {} as PCGState,
+  speed: 1,
   players: [],
   sols: [],
 }

@@ -2,7 +2,7 @@ import { PCGState } from 'fn-pcg/dist/types'
 
 export enum GameCommand {
   START = 'START',
-  COMMIT = 'COMMIT',
+  SPAWN = 'SPAWN',
 }
 
 export type Tableau = {
@@ -19,21 +19,22 @@ export type GameCommandSpawnParams = {
   player: number
 }
 
-export type GameActionCommit = { command: GameCommand.COMMIT }
-
 export type Sol = {
   owner?: number
+  path: number[]
+}
+
+export type Transit = {
+  departed: number
+  source: number
+  destination: number
 }
 
 export type GameState = {
   randGen?: PCGState
+  speed: number
   players: Tableau[]
   sols: Sol[]
 }
 
 export type StateReducer = (state: GameState) => GameState | undefined
-
-export type Controls = {
-  partial?: string[]
-  completion?: string[]
-}

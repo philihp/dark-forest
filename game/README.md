@@ -24,21 +24,12 @@ any given string will process into another GameState.
 ```js
 import { reducer, GameState } from 'dark-forest-game'
 
-const s1 = reducer(s0, ['START']) as GameState
-const s2 = reducer(s1, ['COMMIT']) as GameState
-const s3 = reducer(s2, ['COMMIT']) as GameState
-const s4 = reducer(s3, ['COMMIT']) as GameState
-```
+const s1 = reducer(s0, ['START', 10]) as GameState
+// create player 0 at sol 8
+const s2 = reducer(s1, ['SPAWN', 0, 8]) as GameState
+// create player 1 at sol 4
+const s2 = reducer(s1, ['SPAWN', 1, 4]) as GameState
 
-From any given state, we can issue a `control` on the state to append additional metadata information, like the current score, or possible moves from here. This might be CPU intensive, and would be unnecessary when
-traversing through known-valid moves.
-
-```js
-import { control } from 'dark-forest-game'
-
-const partialCommand: string[] = []
-const playerIndex: number = 0
-const { completion, partial } = control(state, partial, playerIndex)
 ```
 
 - `completion` - a list of strings which could be the prefix of the next command from the user.
