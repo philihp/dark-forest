@@ -22,31 +22,30 @@ export const HeaderUser = () => {
         />
       )}
       {/* <div style={{ display: 'flex' }}>{JSON.stringify({ user })}</div> */}
-      {users.map((u) => {
-        return (
-          <div
+      {users.map((u) => (
+        <div
+          key={u.id}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            borderColor: u.color,
+            borderRadius: 32,
+            borderWidth: 4,
+            borderStyle: 'solid',
+          }}
+        >
+          <img
+            src={u.picture}
+            height="32"
+            width="32"
+            alt={u.name}
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              borderColor: u.color,
               borderRadius: 32,
-              borderWidth: 4,
-              borderStyle: 'solid',
             }}
-          >
-            <img
-              src={u.picture}
-              height="32"
-              width="32"
-              alt={u.name}
-              style={{
-                borderRadius: 32,
-              }}
-            />
-            <div style={{ paddingLeft: 5, paddingRight: 10 }}>{u.name}</div>
-          </div>
-        )
-      })}
+          />
+          <div style={{ paddingLeft: 5, paddingRight: 10 }}>{u.name}</div>
+        </div>
+      ))}
       <div>
         <div
           style={{
