@@ -6,4 +6,5 @@ export const initialState: GameState = {
   speed: 1,
   players: [],
   sols: [],
+  transits: [],
 }

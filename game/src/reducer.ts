@@ -1,7 +1,7 @@
 import { match, P } from 'ts-pattern'
 import { any } from 'ramda'
 import { GameCommand, GameState } from './types'
-import { start, spawn } from './commands'
+import { start, spawn, transit } from './commands'
 
 export const reducer = (state: GameState, [command, ...params]: string[]): GameState | undefined => {
   return match<[string, string[]], GameState | undefined>([command, params])
@@ -20,6 +20,15 @@ export const reducer = (state: GameState, [command, ...params]: string[]): GameS
         return undefined
       }
       return spawn(state, { sol, player })
+    })
+    .with([GameCommand.TRANSIT, [P.number, P.string, P.string]], ([_, params]) => {
+      const departed = Number.parseInt(params[0], 10)
+      const source = Number.parseInt(params[0], 10)
+      const destination = Number.parseInt(params[0], 10)
+      if (any(Number.isNaN, [departed, source, destination])) {
+        return undefined
+      }
+      return transit(state, { departed, source, destination })
     })
     .otherwise((command) => {
       throw new Error(`Unable to parse [${command.join(',')}]`)
