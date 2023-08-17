@@ -14,6 +14,11 @@ export type GameCommandStartParams = {
   seed?: number
 }
 
+export type GameCommandSpawnParams = {
+  sol: number
+  player: number
+}
+
 export type GameActionCommit = { command: GameCommand.COMMIT }
 
 export type Sol = {

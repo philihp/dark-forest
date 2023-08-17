@@ -3,9 +3,11 @@
   "version": "0.0.1",
   "type": "module",
   "devDependencies": {
+    "@types/ramda": "0.29.3",
     "typescript": "5.1.6"
   },
   "dependencies": {
-    "dark-forest-game": "0.1.1"
+    "dark-forest-game": "0.1.1",
+    "ramda": "0.29.0"
   }
 }

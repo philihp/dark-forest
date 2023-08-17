@@ -2,13 +2,14 @@ import { GoogleLogin } from '@react-oauth/google'
 import { useHathoraContext } from '../context/GameContext'
 
 export const HeaderUser = () => {
-  const { user, state, login } = useHathoraContext()
+  const { state: { users } = { users: [] }, user, state, login, join } = useHathoraContext()
 
   return (
     <div
       style={{
-        position: 'sticky',
-        backgroundColor: state?.control ? '#fdb462' : 'auto',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
       }}
     >
       {!user && (
@@ -21,22 +22,50 @@ export const HeaderUser = () => {
         />
       )}
       {/* <div style={{ display: 'flex' }}>{JSON.stringify({ user })}</div> */}
-      {/* {user && (
+      {users.map((u) => {
+        return (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              borderColor: u.color,
+              borderRadius: 32,
+              borderWidth: 4,
+              borderStyle: 'solid',
+            }}
+          >
+            <img
+              src={u.picture}
+              height="32"
+              width="32"
+              alt={u.name}
+              style={{
+                borderRadius: 32,
+              }}
+            />
+            <div style={{ paddingLeft: 5, paddingRight: 10 }}>{u.name}</div>
+          </div>
+        )
+      })}
+      <div>
         <div
           style={{
             display: 'flex',
-            alignItems: 'center',
+            borderColor: '#eee',
+            borderRadius: 32,
+            borderWidth: 4,
+            borderStyle: 'solid',
           }}
         >
-          <img
-            src={user.picture}
-            height="32"
-            width="32"
-            alt={user.name}
-            style={{ ...colorToStyle(state?.me?.color), borderRadius: 16, borderWidth: 4, borderStyle: 'solid' }}
-          />
+          <button
+            type="button"
+            style={{ minHeight: 32, backgroundColor: '#ccc', borderRadius: 32, borderWidth: 0 }}
+            onClick={join}
+          >
+            Join
+          </button>
         </div>
-      )} */}
+      </div>
     </div>
   )
 }

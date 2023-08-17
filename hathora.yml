@@ -3,6 +3,7 @@ types:
     id: UserId
     name: string
     picture: string
+    color: string
   EngineFrame:
     activePlayerIndex: int
   EngineTableau:

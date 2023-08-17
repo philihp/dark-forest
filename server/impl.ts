@@ -1,3 +1,4 @@
+import { find, findIndex, propEq } from 'ramda';
 import { Methods, Context } from "./.hathora/methods";
 import { Response } from "../api/base";
 import {
@@ -21,6 +22,7 @@ type InternalUser = {
   id: UserId
   name: string
   picture: string
+  color: string
 }
 
 type InternalState = {
@@ -31,6 +33,21 @@ type InternalState = {
   commandIndex: number
   partial: string
 }
+
+const colors = [
+  '#8dd3c7',
+  '#ffffb3',
+  '#bebada',
+  '#fb8072',
+  '#80b1d3',
+  '#fdb462',
+  '#b3de69',
+  '#fccde5',
+  '#d9d9d9',
+  '#bc80bd',
+  '#ccebc5',
+  '#ffed6f',
+]
 
 const tokenizePartial = (partial: string): string[] => {
   const out = partial.split(/\s+/)
@@ -52,8 +69,12 @@ export class Impl implements Methods<InternalState> {
 
   join(state: InternalState, userId: UserId, ctx: Context, request: IJoinRequest): Response {
     const { picture, name } = request
-    state.users = state.users.filter(u => u.id !== userId)
-    state.users.push({ id: userId, name, picture })
+    const foundPlayerIndex = findIndex(propEq(userId, 'id'), state.users)
+    if(foundPlayerIndex !== -1)
+      return Response.error(`Already joined as player ${foundPlayerIndex}`);
+    if(state.users.length === 12)
+      return Response.error(`Already have maximum ${state.users.length} players`);
+    state.users.push({ id: userId, name, picture, color: colors[state.users.length] })
     return Response.ok()
   }
 

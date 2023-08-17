@@ -15,8 +15,6 @@ const Game = () => {
 
   return (
     <>
-      <HeaderUser />
-      {connecting && <Loading />}
       <svg
         viewBox="-100 -100 200 200" /* min-x min-y width height */
         preserveAspectRatio="xMidYMid meet"
@@ -31,9 +29,20 @@ const Game = () => {
           const x = r * Math.cos(theta)
           const y = r * Math.sin(theta)
 
-          return <circle key={`dot${n}`} cx={`${x}`} cy={`${y}`} r="2" style={{ fill: '#87a74f' }} />
+          return (
+            <circle
+              onClick={() => console.log(n)}
+              key={`dot${n}`}
+              cx={`${x}`}
+              cy={`${y}`}
+              r="2"
+              style={{ fill: '#87a74f' }}
+            />
+          )
         })}
       </svg>
+      <HeaderUser />
+      {connecting && <Loading />}
       <pre>{JSON.stringify(state, undefined, 2)}</pre>
     </>
   )
