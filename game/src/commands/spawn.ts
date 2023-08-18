@@ -1,6 +1,6 @@
 import { any, assocPath, pipe } from 'ramda'
 import { GameCommandSpawnParams, GameState, StateReducer } from '../types'
-import { removeExpiredTransits } from './action/removeExpiredTransits'
+import { removeExpired } from './action/removeExpired'
 
 const checkPlayerOwner =
   (player: number, sol: number): StateReducer =>
@@ -28,7 +28,7 @@ const assignOwner =
 export const spawn = ({ time, player, sol }: GameCommandSpawnParams): StateReducer =>
   pipe(
     //
-    removeExpiredTransits(time),
+    removeExpired(time),
     checkPlayerOwner(player, sol),
     checkSolExists(sol),
     assignOwner(player, sol)

@@ -28,6 +28,10 @@ export type GameCommandTransitParams = {
   destination: number
 }
 
+export type GameCommandTickParams = {
+  time: number
+}
+
 export type Sol = {
   owner?: number
   path: number[]

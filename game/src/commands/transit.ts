@@ -1,6 +1,6 @@
 import { pipe } from 'ramda'
 import { GameCommandTransitParams, StateReducer } from '../types'
-import { removeExpiredTransits } from './action/removeExpiredTransits'
+import { tick } from './tick'
 
 const checkPlayerOwner =
   (player: number, source: number): StateReducer =>
@@ -29,7 +29,7 @@ const addTransitDeparture =
 export const transit = ({ player, time, source, destination }: GameCommandTransitParams): StateReducer =>
   pipe(
     //
-    removeExpiredTransits(time),
+    tick({ time }),
     checkPlayerOwner(player, source),
     addTransitDeparture(time, source, destination)
   )
