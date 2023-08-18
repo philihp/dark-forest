@@ -1,5 +1,5 @@
 {
-  "version": "0.4.1",
+  "version": "0.4.2",
   "name": "dark-forest-game",
   "sideEffects": false,
   "description": "Dark Forest board game logic",
