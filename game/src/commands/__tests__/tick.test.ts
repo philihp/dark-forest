@@ -12,7 +12,6 @@ describe('commands/tick', () => {
         { owner: 0, path: [] },
         { owner: undefined, path: [] },
       ],
-      players: [{ money: 0 }, { money: 0 }],
       transits: [],
     }
     const s2 = tick({ time: 10000 })(s1)!
@@ -32,7 +31,6 @@ describe('commands/tick', () => {
         { owner: 0, path: [] },
         { owner: undefined, path: [] },
       ],
-      players: [{ money: 0 }, { money: 0 }],
       transits: [
         { departed: 10100, source: 1, destination: 2 },
         { departed: 10110, source: 2, destination: 3 },
@@ -46,11 +44,6 @@ describe('commands/tick', () => {
   it('does not come back undefined on a standard tick', () => {
     const s1: GameState = {
       speed: 1,
-      players: [
-        {
-          money: 0,
-        },
-      ],
       sols: [
         {
           path: [],

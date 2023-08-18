@@ -12,13 +12,11 @@ describe('commands/transit', () => {
         { owner: 0, path: [] },
         { owner: undefined, path: [] },
       ],
-      players: [{ money: 0 }, { money: 0 }],
     }
     const s2 = transit({ player: 0, source: 2, destination: 1, time: 10000 })(s1)!
 
     expect(s2?.transits).toStrictEqual([{ departed: 10000, source: 2, destination: 1 }])
     // and nothing else changes
-    expect(s2.players).toBe(s1.players)
     expect(s2.sols).toBe(s1.sols)
   })
   it('keeps undefined state', () => {
@@ -34,7 +32,6 @@ describe('commands/transit', () => {
         { owner: 0, path: [] },
         { owner: undefined, path: [] },
       ],
-      players: [{ money: 0 }, { money: 0 }],
     }
     const result = transit({ player: 1, source: 2, destination: 1, time: 10000 })(s1)
     expect(result).toBeUndefined()
@@ -48,7 +45,6 @@ describe('commands/transit', () => {
         { owner: 0, path: [] },
         { owner: undefined, path: [] },
       ],
-      players: [{ money: 0 }, { money: 0 }],
       transits: [{ departed: 10100, source: 0, destination: 1 }],
     }
     const s2 = transit({ player: 1, source: 1, destination: 2, time: 13000 })(s1)!
@@ -63,7 +59,6 @@ describe('commands/transit', () => {
         { owner: 0, path: [] },
         { owner: undefined, path: [] },
       ],
-      players: [{ money: 0 }, { money: 0 }],
       transits: [
         { departed: 10100, source: 1, destination: 2 },
         { departed: 10110, source: 2, destination: 3 },
@@ -76,8 +71,6 @@ describe('commands/transit', () => {
       { departed: 10120, source: 3, destination: 0 },
       { departed: 11111, source: 2, destination: 1 },
     ])
-    // and nothing else changes
-    expect(s2.players).toBe(s1.players)
   })
 
   it('sets initial source to destination path', () => {
@@ -89,7 +82,6 @@ describe('commands/transit', () => {
         { owner: 0, path: [] },
         { owner: undefined, path: [] },
       ],
-      players: [{ money: 0 }, { money: 0 }],
       transits: [
         { departed: 10100, source: 1, destination: 2 },
         { departed: 10110, source: 2, destination: 3 },
@@ -116,7 +108,6 @@ describe('commands/transit', () => {
         { owner: 1, path: [] },
         { owner: 1, path: [] },
       ],
-      players: [{ money: 0 }, { money: 0 }],
       transits: [{ departed: 10100, source: 2, destination: 3 }],
     }
     const s2 = transit({ player: 1, source: 4, destination: 3, time: 11111 })(s1)!

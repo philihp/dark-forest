@@ -7,10 +7,6 @@ export enum GameCommand {
   TICK = 'TICK',
 }
 
-export type Tableau = {
-  money: number
-}
-
 export type GameCommandStartParams = {
   sols: number
   seed?: number
@@ -47,7 +43,6 @@ export type Transit = {
 export type GameState = {
   randGen?: PCGState
   speed: number
-  players: Tableau[]
   sols: Sol[]
   transits: Transit[]
 }

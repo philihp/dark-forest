@@ -16,7 +16,6 @@ export const start =
     state && {
       ...state,
       randGen: createPcg32({}, seed, PCG_PERIOD),
-      players: [],
       sols: map(
         (): Sol => ({
           owner: undefined,

@@ -25,7 +25,6 @@ describe('reducer', () => {
       { owner: 0, path: [] },
       { owner: undefined, path: [] },
     ],
-    players: [{ money: 0 }, { money: 0 }],
   }
 
   it('handles unfound commands', () => {
