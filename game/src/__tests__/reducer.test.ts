@@ -1,23 +1,35 @@
-import { identity } from 'ramda'
 import { reducer } from '../reducer'
 import { initialState } from '../state'
-import { start, spawn } from '../commands'
+import { start, spawn, transit } from '../commands'
 
 jest.mock('../commands', () => {
   return {
     ...jest.requireActual('../commands'),
-    spawn: jest.fn().mockReturnValue(identity),
-    start: jest.fn().mockReturnValue(identity),
+    spawn: jest.fn().mockReturnValue(jest.fn()),
+    start: jest.fn().mockReturnValue(jest.fn()),
+    transit: jest.fn().mockReturnValue(jest.fn()),
   }
+})
+
+afterEach(() => {
+  jest.clearAllMocks()
 })
 
 describe('reducer', () => {
   const s0 = {
     ...initialState,
+    sols: [
+      { owner: undefined, path: [] },
+      { owner: 1, path: [] },
+      { owner: 0, path: [] },
+      { owner: undefined, path: [] },
+    ],
+    players: [{ money: 0 }, { money: 0 }],
   }
 
   it('handles unfound commands', () => {
-    expect(() => reducer(s0, ['FOFOFOFOFOFO'])).toThrow()
+    const result = reducer(['FOFOFOFOFOFO'])(s0)
+    expect(result).toBeUndefined()
   })
 
   describe('initialState', () => {
@@ -29,19 +41,69 @@ describe('reducer', () => {
 
   describe('start', () => {
     it('calls start with sols and seed', () => {
-      reducer(s0, ['START', '100', '42'])!
-      expect(start).toHaveBeenCalledWith(initialState, { seed: 42, sols: 100 })
+      const expectedParams = { seed: 42, sols: 100 }
+      reducer(['START', '100', '42'])(s0)!
+      expect(start).toHaveBeenCalledWith(expectedParams)
+      expect(start(expectedParams)).toHaveBeenCalledWith(s0)
     })
     it('calls start with sols if seed missing', () => {
-      reducer(s0, ['START', '100'])!
-      expect(start).toHaveBeenCalledWith(initialState, { seed: undefined, sols: 100 })
+      const expectedParams = { seed: undefined, sols: 100 }
+      reducer(['START', '100'])(s0)!
+      expect(start).toHaveBeenCalledWith(expectedParams)
+      expect(start(expectedParams)).toHaveBeenCalledWith(s0)
+    })
+    it('returns undefined reducer when invalid param', () => {
+      const nextState = reducer(['START', 'aaa'])(s0)!
+      expect(start).not.toHaveBeenCalled()
+      expect(nextState).toBeUndefined()
     })
   })
 
   describe('spawn', () => {
     it('spawns a player at sol 4', () => {
-      reducer(s0, ['SPAWN', '0', '4'])!
-      expect(spawn).toHaveBeenCalledWith(initialState, { player: 0, sol: 4 })
+      const expectedParams = { player: 0, sol: 4 }
+      reducer(['SPAWN', '0', '4'])(s0)!
+      expect(spawn).toHaveBeenCalledWith(expectedParams)
+      expect(spawn(expectedParams)).toHaveBeenCalledWith(s0)
+    })
+    it('returns undefined reducer when invalid player', () => {
+      const nextState = reducer(['SPAWN', 'aaa', '4'])(s0)!
+      expect(spawn).not.toHaveBeenCalled()
+      expect(nextState).toBeUndefined()
+    })
+    it('returns undefined reducer when invalid sol', () => {
+      const nextState = reducer(['SPAWN', '0', 'aaa'])(s0)!
+      expect(spawn).not.toHaveBeenCalled()
+      expect(nextState).toBeUndefined()
+    })
+  })
+
+  describe('transit', () => {
+    it('transits a player from 0 to 2', () => {
+      const expectedParams = { departed: 1321855, player: 0, source: 2, destination: 1 }
+      reducer(['TRANSIT', '1321855', '0', '2', '1'])(s0)!
+      expect(transit).toHaveBeenCalledWith(expectedParams)
+      expect(transit(expectedParams)).toHaveBeenCalledWith(s0)
+    })
+    it('returns undefined reducer when invalid time', () => {
+      const nextState = reducer(['TRANSIT', '1', '12457751', 'aaa', '4'])(s0)!
+      expect(transit).not.toHaveBeenCalled()
+      expect(nextState).toBeUndefined()
+    })
+    it('returns undefined reducer when invalid player', () => {
+      const nextState = reducer(['TRANSIT', 'aaa', '12457751', '1', '4'])(s0)!
+      expect(transit).not.toHaveBeenCalled()
+      expect(nextState).toBeUndefined()
+    })
+    it('returns undefined reducer when invalid src', () => {
+      const nextState = reducer(['TRANSIT', '1', '1237732', 'aaa', '3'])(s0)!
+      expect(transit).not.toHaveBeenCalled()
+      expect(nextState).toBeUndefined()
+    })
+    it('returns undefined reducer when invalid dst', () => {
+      const nextState = reducer(['TRANSIT', '0', '12378217', '4', 'aaa'])(s0)!
+      expect(transit).not.toHaveBeenCalled()
+      expect(nextState).toBeUndefined()
     })
   })
 })

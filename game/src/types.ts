@@ -16,11 +16,12 @@ export type GameCommandStartParams = {
 }
 
 export type GameCommandSpawnParams = {
-  sol: number
   player: number
+  sol: number
 }
 
 export type GameCommandTransitParams = {
+  player: number
   departed: number
   source: number
   destination: number
@@ -45,4 +46,4 @@ export type GameState = {
   transits: Transit[]
 }
 
-export type StateReducer = (state: GameState) => GameState | undefined
+export type StateReducer = (state?: GameState) => GameState | undefined
