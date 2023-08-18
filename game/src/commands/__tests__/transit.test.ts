@@ -77,10 +77,10 @@ describe('commands/transit', () => {
       { departed: 11111, source: 2, destination: 1 },
     ])
     expect(s2.sols).toStrictEqual([
-      s1.sols[0], // this is the only one that didnt change
+      s1.sols[0],
       { owner: 1, path: [] },
       { owner: 1, path: [] },
-      { owner: 1, path: [] },
+      s1.sols[3], // player 0 should not land, because immediately before player 1 landed on that transit's source
     ])
     // and nothing else changes
     expect(s2.players).toBe(s1.players)

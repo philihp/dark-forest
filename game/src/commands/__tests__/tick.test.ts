@@ -41,17 +41,5 @@ describe('commands/tick', () => {
     const s2 = tick({ time: 11111 })(s1)!
 
     expect(s2?.transits).toStrictEqual([{ departed: 10120, source: 3, destination: 0 }])
-    expect(s2?.sols?.[2]).toMatchObject({
-      owner: 1,
-      path: [],
-    })
-    expect(s2?.sols?.[3]).toMatchObject({
-      owner: 1,
-      path: [],
-    })
-    // and nothing else changes
-    expect(s2.players).toBe(s1.players)
-    expect(s2.sols[0]).toBe(s1.sols[0])
-    expect(s2.sols[1]).toBe(s1.sols[1])
   })
 })

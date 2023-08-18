@@ -1,4 +1,4 @@
-import { assoc, assocPath, filter, reduce } from 'ramda'
+import { Evolvable, assoc, assocPath, evolve, filter, identity, reduce } from 'ramda'
 import { GameState, Sol, StateReducer, Transit } from '../../types'
 
 type TransitAccum = { state: GameState; disrupted: number[] }
@@ -11,21 +11,27 @@ export const arriveTransits =
     if (arrivedTransits.length === 0) return state
 
     const { state: newState } = reduce(
-      (trs: TransitAccum, transit: Transit) => {
+      (accum: TransitAccum, transit: Transit) => {
+        const { state, disrupted } = accum
         const { destination, source } = transit
-        const { state, disrupted } = trs
         const src = state.sols[source]!
         const dst = state.sols[destination]!
-        if (dst.owner === src.owner) return trs
-        const newAccum = assocPath(
-          ['state', 'sols', destination],
+        if (dst.owner === src.owner) return accum
+        if (disrupted.includes(source)) return accum
+        // could be use to use R.evolve here
+        const newState = assocPath(
+          ['sols', destination],
           {
             owner: src.owner,
             path: [],
           } as Sol,
-          { state, disrupted } as TransitAccum
+          state
         )
-        return newAccum
+
+        return {
+          state: newState,
+          disrupted: [...disrupted, destination],
+        }
       },
       { state, disrupted: [] } as TransitAccum,
       arrivedTransits
