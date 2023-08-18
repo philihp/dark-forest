@@ -44,7 +44,7 @@ const Home = () => {
               const { region } = lobby
               const state = (lobby as unknown as { state: { players?: number; country?: string } })?.state
               return (
-                <tr>
+                <tr key={lobby.roomId}>
                   <td>{roomId}</td>
                   <td>{region}</td>
                   <td>

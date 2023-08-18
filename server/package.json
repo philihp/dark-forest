@@ -7,7 +7,7 @@
     "typescript": "5.1.6"
   },
   "dependencies": {
-    "dark-forest-game": "0.4.3",
+    "dark-forest-game": "0.5.0",
     "ramda": "0.29.0"
   }
 }

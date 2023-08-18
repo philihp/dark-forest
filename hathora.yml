@@ -4,10 +4,6 @@ types:
     name: string
     picture: string
     color: string
-  EngineFrame:
-    activePlayerIndex: int
-  EnginePlayer:
-    money: int
   EngineSol:
     owner: int?
     path: int[]
@@ -18,7 +14,6 @@ types:
   EngineState:
     users: EngineUser[]
     me: EngineUser?
-    players: EnginePlayer[]
     sols: EngineSol[]
     transits: EngineTransit[]
 
@@ -36,4 +31,4 @@ auth:
 userState: EngineState
 error: string
 
-tick: 900
+tick: 50

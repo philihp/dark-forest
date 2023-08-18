@@ -85,7 +85,6 @@ export class Impl implements Methods<InternalState> {
     return {
       users,
       me,
-      players: state.game.players,
       sols: state.game.sols,
       transits: state.game.transits,
     }
@@ -94,14 +93,8 @@ export class Impl implements Methods<InternalState> {
   onTick(state: InternalState, ctx: Context, timeDelta: number): void {
     if(state.game === initialState) return
     if(state.users.length === 0) return
-    if(state.game?.players?.length === 0) return
     const params = [`${ctx.time}`, '0', 'TICK']
     const nextGame = reducer(params)(state.game)
-    if(nextGame === undefined) {
-      console.log(`ERROR: ${params}`)
-      console.log(JSON.stringify(state.game, undefined, 2))
-      return
-    }
-    state.game = nextGame
+    if(nextGame !== undefined) state.game = nextGame
   }
 }
