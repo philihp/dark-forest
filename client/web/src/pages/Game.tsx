@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom'
 import { MouseEvent } from 'react'
+import { dissoc, pipe } from 'ramda'
 import { HeaderUser } from '../components/HeaderUser'
 import { Loading } from '../components/Loading'
 
@@ -50,7 +51,17 @@ const Game = () => {
       </svg>
       <HeaderUser />
       {connecting && <Loading />}
-      <pre>{JSON.stringify(state, undefined, 2)}</pre>
+      <pre>
+        {JSON.stringify(
+          pipe(
+            //
+            dissoc('users'),
+            dissoc('me')
+          )(state!),
+          undefined,
+          2
+        )}
+      </pre>
     </>
   )
 }
