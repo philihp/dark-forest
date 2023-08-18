@@ -1,5 +1,6 @@
 import { append, assoc, assocPath, filter, map, reduce } from 'ramda'
 import { GameState, Sol, StateReducer, Transit } from '../../types'
+import { coordinates, distance } from '../../math'
 
 const setSolToOwner =
   (destination: number, owner?: number): StateReducer =>
@@ -44,7 +45,12 @@ export const arriveTransits =
   (time: number): StateReducer =>
   (state) => {
     if (state === undefined) return undefined
-    const arrivedTransits = filter((transit: Transit) => transit.departed + state.speed * 1000 < time, state.transits)
+    const arrivedTransits = filter((transit: Transit) => {
+      const [sx, sy] = coordinates(transit.source)
+      const [dx, dy] = coordinates(transit.destination)
+      const len = distance(sx, sy, dx, dy)
+      return transit.departed + state!.speed * len * 1000 < time
+    }, state.transits)
     if (arrivedTransits.length === 0) return state
 
     const { state: newState } = reduce(

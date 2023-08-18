@@ -30,16 +30,17 @@ describe('commands/tick', () => {
         { owner: 1, path: [] },
         { owner: 0, path: [] },
         { owner: undefined, path: [] },
+        { owner: 1, path: [] },
       ],
       transits: [
-        { departed: 10100, source: 1, destination: 2 },
-        { departed: 10110, source: 2, destination: 3 },
-        { departed: 10120, source: 3, destination: 0 },
+        { departed: 10000, source: 1, destination: 0 },
+        { departed: 10001, source: 2, destination: 4 },
+        { departed: 10002, source: 4, destination: 1 },
       ],
     }
-    const s2 = tick({ time: 11111 })(s1)!
+    const s2 = tick({ time: 20000 })(s1)!
 
-    expect(s2?.transits).toStrictEqual([{ departed: 10120, source: 3, destination: 0 }])
+    expect(s2?.transits).toStrictEqual([{ departed: 10001, source: 2, destination: 4 }])
   })
   it('does not come back undefined on a standard tick', () => {
     const s1: GameState = {

@@ -58,18 +58,19 @@ describe('commands/transit', () => {
         { owner: 1, path: [] },
         { owner: 0, path: [] },
         { owner: undefined, path: [] },
+        { owner: 1, path: [] },
       ],
       transits: [
-        { departed: 10100, source: 1, destination: 2 },
-        { departed: 10110, source: 2, destination: 3 },
-        { departed: 10120, source: 3, destination: 0 },
+        { departed: 10000, source: 1, destination: 0 },
+        { departed: 10001, source: 2, destination: 4 },
+        { departed: 10002, source: 4, destination: 1 },
       ],
     }
-    const s2 = transit({ player: 1, source: 2, destination: 1, time: 11111 })(s1)!
+    const s2 = transit({ player: 0, source: 2, destination: 1, time: 20000 })(s1)!
 
     expect(s2?.transits).toStrictEqual([
-      { departed: 10120, source: 3, destination: 0 },
-      { departed: 11111, source: 2, destination: 1 },
+      { departed: 10001, source: 2, destination: 4 },
+      { departed: 20000, source: 2, destination: 1 },
     ])
   })
 
@@ -82,19 +83,16 @@ describe('commands/transit', () => {
         { owner: 0, path: [] },
         { owner: undefined, path: [] },
       ],
-      transits: [
-        { departed: 10100, source: 1, destination: 2 },
-        { departed: 10110, source: 2, destination: 3 },
-        { departed: 10120, source: 3, destination: 0 },
-      ],
+      transits: [],
     }
-    const s2 = transit({ player: 1, source: 2, destination: 1, time: 11111 })(s1)!
+    const s2 = transit({ player: 0, source: 2, destination: 3, time: 10000 })(s1)!
+    const s3 = transit({ player: 1, source: 1, destination: 3, time: 40000 })(s2)!
 
-    expect(s2.sols).toStrictEqual([
-      s1.sols[0],
-      { owner: 1, path: [2] },
+    expect(s3.sols).toStrictEqual([
+      { owner: undefined, path: [] },
       { owner: 1, path: [] },
-      s1.sols[3], // player 0 should not land, because immediately before player 1 landed on that transit's source
+      { owner: 0, path: [3] },
+      { owner: 0, path: [] },
     ])
   })
 
@@ -110,9 +108,9 @@ describe('commands/transit', () => {
       ],
       transits: [{ departed: 10100, source: 2, destination: 3 }],
     }
-    const s2 = transit({ player: 1, source: 4, destination: 3, time: 11111 })(s1)!
+    const s2 = transit({ player: 1, source: 4, destination: 3, time: 30000 })(s1)!
 
-    expect(s2?.transits).toStrictEqual([{ departed: 11111, source: 4, destination: 3 }])
+    expect(s2?.transits).toStrictEqual([{ departed: 30000, source: 4, destination: 3 }])
     expect(s2.sols).toStrictEqual([
       { owner: 0, path: [1, 2, 3] },
       { owner: 0, path: [2, 3] },
