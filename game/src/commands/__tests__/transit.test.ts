@@ -76,13 +76,58 @@ describe('commands/transit', () => {
       { departed: 10120, source: 3, destination: 0 },
       { departed: 11111, source: 2, destination: 1 },
     ])
+    // and nothing else changes
+    expect(s2.players).toBe(s1.players)
+  })
+
+  it('sets initial source to destination path', () => {
+    const s1 = {
+      ...initialState,
+      sols: [
+        { owner: undefined, path: [] },
+        { owner: 1, path: [] },
+        { owner: 0, path: [] },
+        { owner: undefined, path: [] },
+      ],
+      players: [{ money: 0 }, { money: 0 }],
+      transits: [
+        { departed: 10100, source: 1, destination: 2 },
+        { departed: 10110, source: 2, destination: 3 },
+        { departed: 10120, source: 3, destination: 0 },
+      ],
+    }
+    const s2 = transit({ player: 1, source: 2, destination: 1, time: 11111 })(s1)!
+
     expect(s2.sols).toStrictEqual([
       s1.sols[0],
-      { owner: 1, path: [] },
+      { owner: 1, path: [2] },
       { owner: 1, path: [] },
       s1.sols[3], // player 0 should not land, because immediately before player 1 landed on that transit's source
     ])
-    // and nothing else changes
-    expect(s2.players).toBe(s1.players)
+  })
+
+  it('extends already extended paths', () => {
+    const s1 = {
+      ...initialState,
+      sols: [
+        { owner: 0, path: [1, 2] },
+        { owner: 0, path: [2] },
+        { owner: 0, path: [] },
+        { owner: 1, path: [] },
+        { owner: 1, path: [] },
+      ],
+      players: [{ money: 0 }, { money: 0 }],
+      transits: [{ departed: 10100, source: 2, destination: 3 }],
+    }
+    const s2 = transit({ player: 1, source: 4, destination: 3, time: 11111 })(s1)!
+
+    expect(s2?.transits).toStrictEqual([{ departed: 11111, source: 4, destination: 3 }])
+    expect(s2.sols).toStrictEqual([
+      { owner: 0, path: [1, 2, 3] },
+      { owner: 0, path: [2, 3] },
+      { owner: 0, path: [3] },
+      { owner: 0, path: [] },
+      { owner: 1, path: [] },
+    ])
   })
 })
