@@ -16,6 +16,7 @@ export type GameCommandStartParams = {
 }
 
 export type GameCommandSpawnParams = {
+  time: number
   player: number
   sol: number
 }
