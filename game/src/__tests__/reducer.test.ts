@@ -80,7 +80,7 @@ describe('reducer', () => {
 
   describe('transit', () => {
     it('transits a player from 0 to 2', () => {
-      const expectedParams = { departed: 1321855, player: 0, source: 2, destination: 1 }
+      const expectedParams = { time: 1321855, player: 0, source: 2, destination: 1 }
       reducer(['TRANSIT', '1321855', '0', '2', '1'])(s0)!
       expect(transit).toHaveBeenCalledWith(expectedParams)
       expect(transit(expectedParams)).toHaveBeenCalledWith(s0)

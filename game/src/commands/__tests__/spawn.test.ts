@@ -25,7 +25,7 @@ describe('commands/start', () => {
     expect(s2.players).toBe(s1.players)
   })
   it('keeps undefined state', () => {
-    const result = spawn({ sol: 0, player: 0 })(undefined)
+    const result = spawn({ sol: 0, player: 0 })(undefined!)
     expect(result).toBeUndefined()
   })
   it('cannot spawn unless game has started with some sols', () => {

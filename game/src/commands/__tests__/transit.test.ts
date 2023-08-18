@@ -14,7 +14,7 @@ describe('commands/transit', () => {
       ],
       players: [{ money: 0 }, { money: 0 }],
     }
-    const s2 = transit({ player: 0, source: 2, destination: 1, departed: 10000 })(s1)!
+    const s2 = transit({ player: 0, source: 2, destination: 1, time: 10000 })(s1)!
 
     expect(s2?.transits).toStrictEqual([{ departed: 10000, source: 2, destination: 1 }])
     // and nothing else changes
@@ -22,7 +22,7 @@ describe('commands/transit', () => {
     expect(s2.sols).toBe(s1.sols)
   })
   it('keeps undefined state', () => {
-    const result = transit({ player: 0, source: 2, destination: 1, departed: 10000 })(undefined)
+    const result = transit({ player: 0, source: 2, destination: 1, time: 10000 })(undefined!)
     expect(result).toBeUndefined()
   })
   it('cannot transit someone elses system', () => {
@@ -36,7 +36,7 @@ describe('commands/transit', () => {
       ],
       players: [{ money: 0 }, { money: 0 }],
     }
-    const result = transit({ player: 1, source: 2, destination: 1, departed: 10000 })(s1)
+    const result = transit({ player: 1, source: 2, destination: 1, time: 10000 })(s1)
     expect(result).toBeUndefined()
   })
 })

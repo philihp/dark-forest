@@ -22,7 +22,7 @@ export type GameCommandSpawnParams = {
 
 export type GameCommandTransitParams = {
   player: number
-  departed: number
+  time: number
   source: number
   destination: number
 }

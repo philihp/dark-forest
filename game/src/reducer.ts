@@ -21,11 +21,11 @@ export const reducer =
         return spawn({ sol, player })(state)
       })
       .with([GameCommand.TRANSIT, [P.string, P.string, P.string, P.string]], ([_, params]) => {
-        const departed = Number.parseInt(params[0], 10)
+        const time = Number.parseInt(params[0], 10)
         const player = Number.parseInt(params[1], 10)
         const source = Number.parseInt(params[2], 10)
         const destination = Number.parseInt(params[3], 10)
-        if (any(Number.isNaN, [departed, player, source, destination])) return undefined
-        return transit({ departed, player, source, destination })(state)
+        if (any(Number.isNaN, [time, player, source, destination])) return undefined
+        return transit({ time, player, source, destination })(state)
       })
       .otherwise(() => undefined)
