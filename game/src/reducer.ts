@@ -1,7 +1,7 @@
 import { match, P } from 'ts-pattern'
 import { always, any } from 'ramda'
 import { GameCommand, GameState, StateReducer } from './types'
-import { start, spawn, transit } from './commands'
+import { start, spawn, transit, tick } from './commands'
 
 export const reducer = ([timeRaw, playerRaw, command, ...params]: string[]): StateReducer => {
   const time = Number.parseInt(timeRaw, 10)
@@ -9,6 +9,7 @@ export const reducer = ([timeRaw, playerRaw, command, ...params]: string[]): Sta
   if (any(Number.isNaN, [time, player])) return always(undefined)
   return (state) =>
     match<[string, string[]], GameState | undefined>([command, params])
+      .with([GameCommand.TICK, []], ([_]) => tick({ time })(state))
       .with([GameCommand.START, P.array(P.string)], ([_, params]) => {
         const sols = Number.parseInt(params[0], 10)
         const seed = Number.parseInt(params[1], 10)

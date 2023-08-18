@@ -6,6 +6,7 @@ import { Loading } from '../components/Loading'
 
 import { useHathoraContext } from '../context/GameContext'
 import { useAutoConnect } from '../hooks/useAutoConnect'
+import { StartButton } from '../components/StartButton'
 
 const Game = () => {
   const { gameId } = useParams()
@@ -23,9 +24,9 @@ const Game = () => {
   return (
     <>
       <svg
-        viewBox="-100 -100 200 200" /* min-x min-y width height */
+        viewBox="-50 -50 100 100" /* min-x min-y width height */
         preserveAspectRatio="xMidYMid meet"
-        style={{ width: '100%', height: '40em' }}
+        style={{ width: '100%', height: '20em' }}
         role="img"
       >
         <title>A gradient</title>
@@ -51,6 +52,7 @@ const Game = () => {
       </svg>
       <HeaderUser />
       {connecting && <Loading />}
+      <StartButton />
       <pre>
         {JSON.stringify(
           pipe(

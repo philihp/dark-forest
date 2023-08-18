@@ -1,9 +1,10 @@
 import { PCGState } from 'fn-pcg/dist/types'
 
 export enum GameCommand {
-  START = 'START',
   SPAWN = 'SPAWN',
+  START = 'START',
   TRANSIT = 'TRANSIT',
+  TICK = 'TICK',
 }
 
 export type Tableau = {

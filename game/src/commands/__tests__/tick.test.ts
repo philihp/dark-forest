@@ -1,3 +1,4 @@
+import { GameState } from '../..'
 import { initialState } from '../../state'
 import { tick } from '../tick'
 
@@ -41,5 +42,76 @@ describe('commands/tick', () => {
     const s2 = tick({ time: 11111 })(s1)!
 
     expect(s2?.transits).toStrictEqual([{ departed: 10120, source: 3, destination: 0 }])
+  })
+  it('does not come back undefined on a standard tick', () => {
+    const s1: GameState = {
+      speed: 1,
+      players: [
+        {
+          money: 0,
+        },
+      ],
+      sols: [
+        {
+          path: [],
+        },
+        {
+          path: [],
+        },
+        {
+          path: [],
+        },
+        {
+          owner: 0,
+          path: [],
+        },
+        {
+          path: [],
+        },
+        {
+          path: [],
+        },
+        {
+          path: [],
+        },
+      ],
+      transits: [
+        {
+          departed: 1692341379006,
+          source: 3,
+          destination: 0,
+        },
+      ],
+    }
+    const s2 = tick({ time: 1692341606751 })(s1)
+    expect(s2).toMatchObject({
+      ...s1,
+      transits: [],
+      sols: [
+        {
+          path: [],
+          owner: 0,
+        },
+        {
+          path: [],
+        },
+        {
+          path: [],
+        },
+        {
+          owner: 0,
+          path: [0],
+        },
+        {
+          path: [],
+        },
+        {
+          path: [],
+        },
+        {
+          path: [],
+        },
+      ],
+    })
   })
 })

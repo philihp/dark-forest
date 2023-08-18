@@ -1,6 +1,6 @@
 import { reducer } from '../reducer'
 import { initialState } from '../state'
-import { start, spawn, transit } from '../commands'
+import { start, spawn, transit, tick } from '../commands'
 
 jest.mock('../commands', () => {
   return {
@@ -8,6 +8,7 @@ jest.mock('../commands', () => {
     spawn: jest.fn().mockReturnValue(jest.fn()),
     start: jest.fn().mockReturnValue(jest.fn()),
     transit: jest.fn().mockReturnValue(jest.fn()),
+    tick: jest.fn().mockReturnValue(jest.fn()),
   }
 })
 
@@ -56,6 +57,15 @@ describe('reducer', () => {
       const nextState = reducer(['1984', '0', 'START', 'aaa'])(s0)!
       expect(start).not.toHaveBeenCalled()
       expect(nextState).toBeUndefined()
+    })
+  })
+
+  describe('tick', () => {
+    it('calls tick', () => {
+      const expectedParams = { time: 2023 }
+      reducer(['2023', '0', 'TICK'])(s0)!
+      expect(tick).toHaveBeenCalledWith(expectedParams)
+      expect(tick(expectedParams)).toHaveBeenCalledWith(s0)
     })
   })
 

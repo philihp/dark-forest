@@ -20,11 +20,8 @@ interface GameContext {
   createPrivateLobby: () => ReturnType<HathoraClient['createPrivateLobby']>
   getPublicLobbies: () => ReturnType<HathoraClient['getPublicLobbies']>
   join: () => Promise<void>
-  start: () => Promise<void>
+  start: (size: string) => Promise<void>
   move: (command: string) => Promise<void>
-  control: (partial: string) => Promise<void>
-  undo: () => Promise<void>
-  redo: () => Promise<void>
   endGame: () => Promise<void>
   getUser: (userId: string) => EngineUser | undefined
 }
@@ -107,9 +104,12 @@ export const HathoraContextProvider = ({ children }: HathoraContextProviderProps
     await connection?.join({ picture: user.picture, name: user.name })
   }, [connection, user])
 
-  const start = useCallback(async () => {
-    await connection?.start({})
-  }, [connection])
+  const start = useCallback(
+    async (size: string) => {
+      await connection?.start({ size })
+    },
+    [connection]
+  )
 
   const move = useCallback(
     async (command: string) => {
@@ -117,21 +117,6 @@ export const HathoraContextProvider = ({ children }: HathoraContextProviderProps
     },
     [connection]
   )
-
-  const control = useCallback(
-    async (partial: string) => {
-      await connection?.control({ partial })
-    },
-    [connection]
-  )
-
-  const undo = useCallback(async () => {
-    await connection?.undo({})
-  }, [connection])
-
-  const redo = useCallback(async () => {
-    await connection?.redo({})
-  }, [connection])
 
   const endGame = useCallback(async () => {
     setEngineState(undefined)
@@ -161,9 +146,6 @@ export const HathoraContextProvider = ({ children }: HathoraContextProviderProps
       join,
       start,
       move,
-      control,
-      undo,
-      redo,
       endGame,
       getUser,
     }),
@@ -182,9 +164,6 @@ export const HathoraContextProvider = ({ children }: HathoraContextProviderProps
       join,
       start,
       move,
-      control,
-      undo,
-      redo,
       endGame,
       getUser,
     ]

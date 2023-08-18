@@ -26,8 +26,6 @@ methods:
   join:
     picture: string
     name: string
-  start:
-    size: string
   move:
     command: string
 
@@ -37,3 +35,5 @@ auth:
 
 userState: EngineState
 error: string
+
+tick: 900

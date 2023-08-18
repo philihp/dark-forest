@@ -7,7 +7,6 @@ import {
   UserId,
   IInitializeRequest,
   IJoinRequest,
-  IStartRequest,
   IMoveRequest,
 } from "../api/types";
 import {
@@ -43,10 +42,11 @@ const colors = [
 
 
 export class Impl implements Methods<InternalState> {
+
   initialize(ctx: Context, request: IInitializeRequest): InternalState {
     return {
       users: [],
-      game: reducer([`${ctx.time}`, '0', 'START', '6'])(initialState)!
+      game: initialState
     }
   }
 
@@ -61,22 +61,15 @@ export class Impl implements Methods<InternalState> {
     return Response.ok()
   }
 
-  start(state: InternalState, userId: UserId, ctx: Context, request: IStartRequest): Response {
-    const player = findIndex( (u) => u.id === userId, state.users)
-    const { size } = request
-    const command = [`${ctx.time}`, `${player}`, 'START', size]
-    const newGame = reducer(command)(state.game) as GameState
-    if(newGame === undefined) return Response.error(`Unable to start with ${command.join(' ')}`)
-    state.game = newGame
-    return Response.ok()
-  }
-
   move(state: InternalState, userId: UserId, ctx: Context, request: IMoveRequest): Response {
     const player = findIndex( (u) => u.id === userId, state.users)
-    if(player === -1)
+    if(player === -1) {
+      console.log('User is not a player of this game.')
       return Response.error('User is not a player of this game.')
+    }
+
     const params = [ `${ctx.time}`, `${player}`, ...request.command.split(/\s+/) ]
-    const nextGame = reducer(params)(state.game) as GameState
+    const nextGame = reducer(params)(state.game)
     if(nextGame === undefined) {
       console.log(`ERROR ${params}`)
       return Response.error(`ERROR ${params.join(' ')}`)
@@ -96,5 +89,19 @@ export class Impl implements Methods<InternalState> {
       sols: state.game.sols,
       transits: state.game.transits,
     }
+  }
+
+  onTick(state: InternalState, ctx: Context, timeDelta: number): void {
+    if(state.game === initialState) return
+    if(state.users.length === 0) return
+    if(state.game?.players?.length === 0) return
+    const params = [`${ctx.time}`, '0', 'TICK']
+    const nextGame = reducer(params)(state.game)
+    if(nextGame === undefined) {
+      console.log(`ERROR: ${params}`)
+      console.log(JSON.stringify(state.game, undefined, 2))
+      return
+    }
+    state.game = nextGame
   }
 }
