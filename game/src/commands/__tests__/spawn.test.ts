@@ -1,4 +1,4 @@
-import { initialState } from '../../state'
+import { initialState, initialTableau } from '../../state'
 import { Sol } from '../../types'
 import { spawn } from '../spawn'
 
@@ -12,7 +12,7 @@ describe('commands/start', () => {
         { owner: undefined, path: [] },
         { owner: undefined, path: [] },
       ],
-      players: [{ money: 0 }, { money: 0 }],
+      players: [],
     }
     const s2 = spawn({ time: 100, sol: 2, player: 0 })(s1)!
     expect(s2.sols[2]).toMatchObject({ owner: 0 })
@@ -22,7 +22,7 @@ describe('commands/start', () => {
     expect(s2.sols[0]).toBe(s1.sols[0])
     expect(s2.sols[1]).toBe(s1.sols[1])
     expect(s2.sols[3]).toBe(s1.sols[3])
-    expect(s2.players).toBe(s1.players)
+    expect(s2.players).toStrictEqual([initialTableau])
   })
   it('keeps undefined state', () => {
     const result = spawn({ time: 100, sol: 0, player: 0 })(undefined!)

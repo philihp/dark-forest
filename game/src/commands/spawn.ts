@@ -1,6 +1,7 @@
 import { any, assocPath, pipe } from 'ramda'
-import { GameCommandSpawnParams, GameState, StateReducer } from '../types'
+import { GameCommandSpawnParams, GameState, StateReducer, Tableau } from '../types'
 import { removeExpired } from './action/removeExpired'
+import { initialTableau } from '../state'
 
 const checkPlayerOwner =
   (player: number, sol: number): StateReducer =>
@@ -25,11 +26,17 @@ const assignOwner =
     return assocPath<number, GameState>(['sols', sol, 'owner'], player)(state)
   }
 
+const createPlayer =
+  (player: number): StateReducer =>
+  (state) =>
+    state && assocPath<Tableau, GameState>(['players', player], initialTableau, state)
+
 export const spawn = ({ time, player, sol }: GameCommandSpawnParams): StateReducer =>
   pipe(
     //
     removeExpired(time),
     checkPlayerOwner(player, sol),
     checkSolExists(sol),
-    assignOwner(player, sol)
+    assignOwner(player, sol),
+    createPlayer(player)
   )
