@@ -6,29 +6,30 @@ types:
     color: string
   EngineFrame:
     activePlayerIndex: int
-  EngineTableau:
+  EnginePlayer:
     money: int
-  EngineControl:
-    partial: string?
-    completion: string[]?
+  EngineSol:
+    owner: int?
+    path: int[]
+  EngineTransit:
+    departed: int
+    source: int
+    destination: int
   EngineState:
     users: EngineUser[]
     me: EngineUser?
-    moves: string[]
-    players: EngineTableau[]?
-    control: EngineControl?
+    players: EnginePlayer[]
+    sols: EngineSol[]
+    transits: EngineTransit[]
 
 methods:
   join:
     picture: string
     name: string
-  start: {}
+  start:
+    size: string
   move:
     command: string
-  control:
-    partial: string
-  undo: {}
-  redo: {}
 
 auth:
   google:

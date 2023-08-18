@@ -1,12 +1,13 @@
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import { GoogleLogin } from '@react-oauth/google'
 import { useHathoraContext } from '../context/GameContext'
 import { HeaderUser } from '../components/HeaderUser'
 import { HathoraClient } from '../../../.hathora/client'
 
 const Home = () => {
   const navigate = useNavigate()
-  const { createPrivateLobby, createPublicLobby, getPublicLobbies, user } = useHathoraContext()
+  const { createPrivateLobby, createPublicLobby, getPublicLobbies, user, login } = useHathoraContext()
 
   const [lobbies, setLobbies] = useState<Awaited<ReturnType<HathoraClient['getPublicLobbies']>>>([])
   useEffect(() => {
@@ -17,7 +18,15 @@ const Home = () => {
 
   return (
     <>
-      <HeaderUser />
+      {!user && (
+        <GoogleLogin
+          auto_select
+          onSuccess={login}
+          onError={() => {
+            console.log('Login Failed')
+          }}
+        />
+      )}
       <h1>Dark Forest</h1>
       <h3>Public Servers</h3>
       <table border={1} cellPadding={3} cellSpacing={0}>
