@@ -1,7 +1,15 @@
-import { assoc, pathEq, pathSatisfies, pipe, when } from 'ramda'
-import { GameCommandTransitParams, StateReducer } from '../types'
+import { assoc, pipe, reject } from 'ramda'
+import { GameCommandTransitParams, StateReducer, Transit } from '../types'
 
-const removeExpiredTransits = (time: number): StateReducer => assoc('transits', [])
+const removeExpiredTransits =
+  (time: number): StateReducer =>
+  (state) =>
+    state &&
+    assoc(
+      'transits',
+      reject((transit: Transit) => transit.departed + state.speed * 1000 < time, state.transits),
+      state
+    )
 
 const checkPlayerOwner =
   (player: number, source: number): StateReducer =>

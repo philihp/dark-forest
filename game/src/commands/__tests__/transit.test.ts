@@ -39,4 +39,30 @@ describe('commands/transit', () => {
     const result = transit({ player: 1, source: 2, destination: 1, time: 10000 })(s1)
     expect(result).toBeUndefined()
   })
+  it('removes old transits', () => {
+    const s1 = {
+      ...initialState,
+      sols: [
+        { owner: undefined, path: [] },
+        { owner: 1, path: [] },
+        { owner: 0, path: [] },
+        { owner: undefined, path: [] },
+      ],
+      players: [{ money: 0 }, { money: 0 }],
+      transits: [
+        { departed: 10100, source: 1, destination: 2 },
+        { departed: 10110, source: 2, destination: 3 },
+        { departed: 10120, source: 3, destination: 0 },
+      ],
+    }
+    const s2 = transit({ player: 0, source: 2, destination: 1, time: 11111 })(s1)!
+
+    expect(s2?.transits).toStrictEqual([
+      { departed: 10120, source: 3, destination: 0 },
+      { departed: 11111, source: 2, destination: 1 },
+    ])
+    // and nothing else changes
+    expect(s2.players).toBe(s1.players)
+    expect(s2.sols).toBe(s1.sols)
+  })
 })
