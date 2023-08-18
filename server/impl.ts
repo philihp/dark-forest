@@ -46,7 +46,7 @@ export class Impl implements Methods<InternalState> {
   initialize(ctx: Context, request: IInitializeRequest): InternalState {
     return {
       users: [],
-      game: initialState
+      game: reducer([`${ctx.time}`, '0', 'START', '6'])(initialState)!
     }
   }
 
@@ -62,8 +62,9 @@ export class Impl implements Methods<InternalState> {
   }
 
   start(state: InternalState, userId: UserId, ctx: Context, request: IStartRequest): Response {
+    const player = findIndex( (u) => u.id === userId, state.users)
     const { size } = request
-    const command = [`${ctx.time}`, 'START', size]
+    const command = [`${ctx.time}`, `${player}`, 'START', size]
     const newGame = reducer(command)(state.game) as GameState
     if(newGame === undefined) return Response.error(`Unable to start with ${command.join(' ')}`)
     state.game = newGame
@@ -71,9 +72,15 @@ export class Impl implements Methods<InternalState> {
   }
 
   move(state: InternalState, userId: UserId, ctx: Context, request: IMoveRequest): Response {
-    const command = request.command.split(/\s+/)
-    const nextGame = reducer(command)(state.game) as GameState
-    if(nextGame === undefined) return Response.error(`Invalid command ${command.join(' ')}`)
+    const player = findIndex( (u) => u.id === userId, state.users)
+    if(player === -1)
+      return Response.error('User is not a player of this game.')
+    const params = [ `${ctx.time}`, `${player}`, ...request.command.split(/\s+/) ]
+    const nextGame = reducer(params)(state.game) as GameState
+    if(nextGame === undefined) {
+      console.log(`ERROR ${params}`)
+      return Response.error(`ERROR ${params.join(' ')}`)
+    }
     state.game = nextGame
     return Response.ok()
   }

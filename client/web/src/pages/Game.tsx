@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom'
-import { range } from 'ramda'
+import { MouseEvent } from 'react'
 import { HeaderUser } from '../components/HeaderUser'
 import { Loading } from '../components/Loading'
 
@@ -8,10 +8,16 @@ import { useAutoConnect } from '../hooks/useAutoConnect'
 
 const Game = () => {
   const { gameId } = useParams()
-  const { connecting, state } = useHathoraContext()
+  const { connecting, state, move } = useHathoraContext()
   useAutoConnect(gameId)
 
-  const nodes = range(0, 100)
+  const nodes = state?.sols ?? []
+
+  const handleClick = (n: number) => (e: MouseEvent) => {
+    console.log(e.shiftKey, e)
+    if (e.shiftKey) return move(`SPAWN ${n}`)
+    return move(`TRANSIT ${n} ${0}`)
+  }
 
   return (
     <>
@@ -22,7 +28,7 @@ const Game = () => {
         role="img"
       >
         <title>A gradient</title>
-        {nodes.map((n) => {
+        {nodes.map((sol, n) => {
           const baseAngle = Math.PI * (1 + Math.sqrt(5))
           const r = Math.sqrt(n + 0.5) * 7
           const theta = n * baseAngle
@@ -31,11 +37,12 @@ const Game = () => {
 
           return (
             <circle
-              onClick={() => console.log(n)}
+              onClick={handleClick(n)}
+              // eslint-disable-next-line react/no-array-index-key
               key={`dot${n}`}
               cx={`${x}`}
               cy={`${y}`}
-              r="2"
+              r="5"
               style={{ fill: '#87a74f' }}
             />
           )
