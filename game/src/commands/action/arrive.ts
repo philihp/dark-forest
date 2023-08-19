@@ -1,4 +1,4 @@
-import { append, assoc, assocPath, filter, map, reduce } from 'ramda'
+import { append, assoc, assocPath, dissoc, filter, map, prop, reduce, sortBy } from 'ramda'
 import { GameState, Sol, StateReducer, Transit } from '../../types'
 import { coordinates, distance } from '../../math'
 
@@ -41,16 +41,33 @@ const extendSourceToDestination =
 
 type TransitAccum = { state: GameState | undefined; disrupted: number[] }
 
+type TransitWithArrival = Transit & {
+  arrived: number
+}
+
 export const arriveTransits =
   (time: number): StateReducer =>
   (state) => {
     if (state === undefined) return undefined
-    const arrivedTransits = filter((transit: Transit) => {
-      const [sx, sy] = coordinates(transit.source)
-      const [dx, dy] = coordinates(transit.destination)
-      const len = distance(sx, sy, dx, dy)
-      return transit.departed + state!.speed * len * 1000 < time
-    }, state.transits)
+    const transitsWithArrival: TransitWithArrival[] = map<Transit, TransitWithArrival>(
+      (transit: Transit): TransitWithArrival => {
+        const [sx, sy] = coordinates(transit.source)
+        const [dx, dy] = coordinates(transit.destination)
+        const len = distance(sx, sy, dx, dy)
+        return {
+          ...transit,
+          arrived: transit.departed + state!.speed * len * 1000,
+        }
+      },
+      state.transits
+    )
+    const arrivedTransitsWithArrival: TransitWithArrival[] = filter<TransitWithArrival, TransitWithArrival[]>(
+      (transit: TransitWithArrival) => transit.arrived < time,
+      transitsWithArrival
+    )
+    const sortedArrivedTransits: TransitWithArrival[] = sortBy(prop('arrived'), arrivedTransitsWithArrival)
+    const arrivedTransits: Transit[] = map<TransitWithArrival, Transit>(dissoc('arrived'), sortedArrivedTransits)
+
     if (arrivedTransits.length === 0) return state
 
     const { state: newState } = reduce(
@@ -58,8 +75,7 @@ export const arriveTransits =
         const { state, disrupted } = accum
         const { destination, source } = transit
         const src = state?.sols?.[source]
-        const dst = state?.sols?.[destination]
-        if (dst?.owner === src?.owner) return accum
+        // const dst = state?.sols?.[destination]
         if (disrupted.includes(source)) return accum
         // could be use to use R.evolve here
 
@@ -68,13 +84,6 @@ export const arriveTransits =
         const s2 = extendOtherSolPaths(source, destination)(s1)
         const s3 = extendSourceToDestination(source, destination)(s2)
         const newState = s3
-
-        // const newState = pipe(
-        //   //
-        //   setSolToOwner(destination, src?.owner),
-        //   extendOtherSolPaths(source, destination)
-        // )(state)
-
         return {
           state: newState,
           disrupted: [...disrupted, destination],
