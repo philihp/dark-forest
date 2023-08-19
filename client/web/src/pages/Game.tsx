@@ -1,13 +1,12 @@
 import { useParams } from 'react-router-dom'
 import { MouseEvent, useState } from 'react'
-import { append, assoc, dissoc, equals, forEach, last, pipe, reduce, reject } from 'ramda'
-import { HeaderUser } from '../components/HeaderUser'
-import { Loading } from '../components/Loading'
+import { append, equals, forEach, last, reduce, reject } from 'ramda'
 
 import { useHathoraContext } from '../context/GameContext'
 import { useAutoConnect } from '../hooks/useAutoConnect'
-import { StartButton } from '../components/StartButton'
 import { EngineSol } from '../../../../api/types'
+import { LeftSidebar } from '../components/LeftSidebar'
+import { RightSidebar } from '../components/RightSidebar'
 
 const baseAngle = Math.PI * (1 + Math.sqrt(5))
 const coordinates = (n: number): [number, number] => {
@@ -21,9 +20,8 @@ const distance = (sx: number, sy: number, dx: number, dy: number) => Math.sqrt((
 
 const Game = () => {
   const { gameId } = useParams()
-  const { connecting, state, move } = useHathoraContext()
+  const { state, move } = useHathoraContext()
   const [selected, setSelected] = useState<number[]>([])
-  const [debug, setDebug] = useState<boolean>(false)
   useAutoConnect(gameId)
 
   const nodes = state?.sols ?? []
@@ -42,20 +40,22 @@ const Game = () => {
 
   const handleRightClick = (dst: number) => (e: MouseEvent) => {
     e.preventDefault()
-    forEach((src) => {
-      console.log(`TRANSIT ${src} ${dst}`)
-      move(`TRANSIT ${src} ${dst}`)
-    }, selected)
+    forEach((src) => move(`TRANSIT ${src} ${dst}`), selected)
     setSelected([])
     return undefined
   }
 
   return (
-    <>
+    <div style={{ display: 'flex', padding: 0, margin: 0 }}>
+      <LeftSidebar selected={selected} />
       <svg
         viewBox="-50 -50 100 100" /* min-x min-y width height */
-        preserveAspectRatio="xMidYMid meet"
-        style={{ width: '100%', height: '40em', userSelect: 'none', WebkitUserSelect: 'none' }}
+        preserveAspectRatio="xMaxYMid meet"
+        style={{
+          width: '100vh',
+          userSelect: 'none',
+          WebkitUserSelect: 'none',
+        }}
         role="img"
       >
         {nodes.map((sol, n) => {
@@ -145,35 +145,14 @@ const Game = () => {
                 strokeDasharray: len,
                 strokeLinejoin: 'round',
                 strokeDashoffset: len,
-                animation: `dash ${len}s linear`,
+                animation: `dash ${len}s cubic-bezier(0.33,0,0.67,1)`,
               }}
             />
           )
         })}
       </svg>
-      <HeaderUser />
-      {connecting && <Loading />}
-      <StartButton />
-      <button type="button" onClick={() => setDebug(!debug)}>
-        Debug
-      </button>
-      {debug && (
-        <>
-          <pre>{state?.sols.map((sol) => JSON.stringify(sol)).join('\n')}</pre>
-          <pre>
-            {JSON.stringify(
-              pipe(
-                //
-                dissoc('sols'),
-                assoc('selected', selected)
-              )(state!),
-              undefined,
-              2
-            )}
-          </pre>
-        </>
-      )}
-    </>
+      <RightSidebar />
+    </div>
   )
 }
 

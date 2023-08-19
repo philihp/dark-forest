@@ -8,8 +8,7 @@ export const HeaderUser = () => {
     <div
       style={{
         display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
+        flexDirection: 'column',
       }}
     >
       {!user && (
@@ -28,10 +27,6 @@ export const HeaderUser = () => {
           style={{
             display: 'flex',
             alignItems: 'center',
-            borderColor: u.color,
-            borderRadius: 32,
-            borderWidth: 4,
-            borderStyle: 'solid',
           }}
         >
           <img
@@ -40,7 +35,10 @@ export const HeaderUser = () => {
             width="32"
             alt={u.name}
             style={{
+              borderColor: u.color,
               borderRadius: 32,
+              borderWidth: 4,
+              borderStyle: 'solid',
             }}
           />
           <div style={{ paddingLeft: 5, paddingRight: 10 }}>{u.name}</div>
@@ -50,20 +48,23 @@ export const HeaderUser = () => {
         <div
           style={{
             display: 'flex',
-            borderColor: '#eee',
-            borderRadius: 32,
-            borderWidth: 4,
-            borderStyle: 'solid',
           }}
         >
           <button
             type="button"
-            style={{ minHeight: 32, backgroundColor: '#ccc', borderRadius: 32, borderWidth: 0 }}
+            style={{
+              minHeight: 32,
+              minWidth: 100,
+              backgroundColor: '#ccc',
+              borderRadius: 32,
+              borderWidth: 0,
+            }}
             onClick={join}
           >
             Join
           </button>
         </div>
+        <hr />
       </div>
     </div>
   )
