@@ -164,8 +164,6 @@ const Game = () => {
             {JSON.stringify(
               pipe(
                 //
-                dissoc('users'),
-                dissoc('me'),
                 dissoc('sols'),
                 assoc('selected', selected)
               )(state!),

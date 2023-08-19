@@ -1,4 +1,4 @@
-import { findIndex, propEq } from 'ramda';
+import { assoc, equals, filter, find, findIndex, map, pathSatisfies, propEq, propSatisfies, when } from 'ramda';
 import { Methods, Context } from "./.hathora/methods";
 import { Response } from "../api/base";
 import {
@@ -8,10 +8,13 @@ import {
   IInitializeRequest,
   IJoinRequest,
   IMoveRequest,
+  EngineSol,
+  EngineTransit,
 } from "../api/types";
 import {
   reducer, initialState, GameState
 } from 'dark-forest-game';
+import { Sol, Transit } from 'dark-forest-game/dist/types';
 
 type InternalUser = {
   id: UserId
@@ -76,13 +79,25 @@ export class Impl implements Methods<InternalState> {
 
   getUserState(state: InternalState, userId: UserId): EngineState {
     const users: EngineUser[] = state.users
-    const me = state.users.find(u => u.id === userId)
+    const me = find(u => u.id === userId, state.users)
+    const playerIndex = findIndex(u => u.id === userId, state.users)
 
     return {
       users,
       me,
-      sols: state.game.sols,
-      transits: state.game.transits,
+      sols: map<Sol, EngineSol>(
+        (sol: Sol) => {
+          if(sol.owner === playerIndex) return sol
+          return {
+            owner: sol.owner,
+            path: []
+          }
+        },
+        state.game.sols
+      ),
+      transits: state.game.transits.filter(
+        (transit) => state.game.sols[transit.source].owner === playerIndex
+      ),
     }
   }
 
