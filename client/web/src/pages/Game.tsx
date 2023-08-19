@@ -8,6 +8,16 @@ import { useHathoraContext } from '../context/GameContext'
 import { useAutoConnect } from '../hooks/useAutoConnect'
 import { StartButton } from '../components/StartButton'
 
+const baseAngle = Math.PI * (1 + Math.sqrt(5))
+const coordinates = (n: number): [number, number] => {
+  const r = Math.sqrt(n + 0.5) * 4
+  const theta = n * baseAngle
+  const x = r * Math.cos(theta)
+  const y = r * Math.sin(theta)
+  return [x, y]
+}
+const distance = (sx: number, sy: number, dx: number, dy: number) => Math.sqrt((sx - dx) ** 2 + (sy - dy) ** 2)
+
 const Game = () => {
   const { gameId } = useParams()
   const { connecting, state, move } = useHathoraContext()
@@ -15,6 +25,7 @@ const Game = () => {
   useAutoConnect(gameId)
 
   const nodes = state?.sols ?? []
+  const edges = state?.transits ?? []
 
   const handleLeftClick = (n: number) => (e: MouseEvent) => {
     e.preventDefault()
@@ -45,15 +56,9 @@ const Game = () => {
         style={{ width: '100%', height: '40em' }}
         role="img"
       >
-        <title>A gradient</title>
         {nodes.map((sol, n) => {
-          const baseAngle = Math.PI * (1 + Math.sqrt(5))
-          const r = Math.sqrt(n + 0.5) * 4
-          const theta = n * baseAngle
-          const x = r * Math.cos(theta)
-          const y = r * Math.sin(theta)
+          const [x, y] = coordinates(n)
           const fill = sol.owner === undefined ? '#ddd' : state?.users?.[sol.owner].color
-
           return (
             <circle
               onClick={handleLeftClick(n)}
@@ -62,17 +67,43 @@ const Game = () => {
               key={`dot${n}`}
               cx={`${x}`}
               cy={`${y}`}
-              r="3"
+              r="2"
               style={{
                 fill,
                 ...(selected.includes(n)
                   ? {
                       stroke: '#000000',
-                      strokeWidth: 1,
-                      strokeDasharray: '2,2',
+                      strokeWidth: 0.4,
+                      strokeDasharray: '0.4',
                       strokeLinejoin: 'round',
+                      strokeDashoffset: 100,
+                      animation: 'dash 20s linear',
+                      animationIterationCount: 'infinite',
                     }
                   : {}),
+              }}
+            />
+          )
+        })}
+        {edges.map(({ source, destination, departed }) => {
+          const [sx, sy] = coordinates(source)
+          const [dx, dy] = coordinates(destination)
+          const len = distance(sx, sy, dx, dy)
+          return (
+            <path
+              key={`${departed}:${source}:${destination}`}
+              d={`M ${sx} ${sy} L ${dx} ${dy}`}
+              strokeWidth={0.5}
+              stroke="#444"
+              strokeLinecap="round"
+              style={{
+                strokeOpacity: 0.5,
+                stroke: '#000',
+                strokeWidth: 0.5,
+                strokeDasharray: len,
+                strokeLinejoin: 'round',
+                strokeDashoffset: len,
+                animation: `dash ${len}s linear`,
               }}
             />
           )

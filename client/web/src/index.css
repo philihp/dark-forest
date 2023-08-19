@@ -88,3 +88,9 @@ code {
   background-color: #d9d9d9;
   border-color: #b1b1b1;
 }
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
