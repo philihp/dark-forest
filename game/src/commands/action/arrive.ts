@@ -1,4 +1,34 @@
-import { append, assoc, assocPath, count, dissoc, evolve, filter, map, pipe, prop, reduce, sortBy } from 'ramda'
+import {
+  always,
+  append,
+  assoc,
+  assocPath,
+  complement,
+  count,
+  dissoc,
+  equals,
+  evolve,
+  filter,
+  head,
+  identity,
+  isNotNil,
+  lens,
+  lensPath,
+  lensProp,
+  map,
+  modify,
+  modifyPath,
+  nth,
+  over,
+  pathSatisfies,
+  pipe,
+  prop,
+  propSatisfies,
+  reduce,
+  sortBy,
+  splitWhen,
+  when,
+} from 'ramda'
 import { GameState, Sol, StateReducer, Transit } from '../../types'
 import { coordinates, distance } from '../../math'
 
@@ -6,44 +36,64 @@ const strength =
   (sol: number) =>
   (state?: GameState): number =>
     count((thisSol: Sol): boolean => thisSol.path[thisSol.path.length - 1] === sol, state!.sols) +
-    (state?.sols[sol].owner !== undefined ? 1 : 0)
+    (state?.sols?.[sol].owner !== undefined && state?.sols?.[sol]?.path?.length === 0 ? 1 : 0)
 
-const setSolToOwner =
-  (destination: number, owner?: number): StateReducer =>
-  (state?: GameState): GameState | undefined =>
-    state &&
-    assocPath<Sol, GameState>(
+const setSolToOwner = (destination: number, newOwner?: number): StateReducer =>
+  when(isNotNil, (state) =>
+    modifyPath<'sols', number, GameState, Sol>(
       ['sols', destination],
-      {
-        owner,
-        path: [],
-      } as Sol,
+      when<Sol, Sol>(
+        propSatisfies(complement(equals<number | undefined>(newOwner)), 'owner'),
+        pipe(assoc('owner', newOwner), assoc('path', []))
+      ),
       state
     )
+  )
 
-const extendOtherSolPaths =
-  (source: number, destination: number): StateReducer =>
-  (state) => {
-    const newSols = map((sol) => {
-      if (source === sol.path[sol.path.length - 1]) {
-        return assoc('path', append(destination, sol.path), sol)
-      }
-      return sol
-    }, state!.sols)
-
-    return assoc('sols', newSols, state)
-  }
-
-const extendSourceToDestination =
-  (source: number, destination: number): StateReducer =>
-  (state?: GameState): GameState | undefined =>
-    state &&
-    assocPath<number[], GameState>(
-      //
-      ['sols', source, 'path'],
-      [destination],
-      state
+const truncateSupplyLinesNotFriendlyThrough = (owner?: number, system?: number): StateReducer =>
+  when(
+    isNotNil,
+    modify<'sols', Sol[], Sol[]>(
+      'sols',
+      map<Sol, Sol>(
+        // when the sol's owner is not this owner
+        when<Sol, Sol>(propSatisfies(complement(equals<number | undefined>(owner)), 'owner'), (sol) => {
+          // split [..., 1, 2, 3, 4] at system=3, so the result is just [..., 1, 2]
+          return modify<Sol, 'path', number[]>(
+            'path',
+            pipe<[number[]], number[][], number[]>(
+              //
+              splitWhen<number>(equals(system)),
+              head
+            ),
+            sol
+          )
+        })
+      )
     )
+  )
+
+const extendOtherSolPaths = (source: number, destination: number): StateReducer =>
+  when(
+    isNotNil,
+    modify(
+      'sols',
+      map(
+        when(
+          // for every sol, if the last element in the path is `source`, then append destination
+          pathSatisfies(equals(source), ['path', -1]),
+          over(lensProp<Sol, 'path'>('path'), append(destination))
+        )
+      )
+    )
+  )
+
+const extendSourceToDestination = (source: number, destination: number): StateReducer =>
+  when(
+    // a fleet at home wont have anything in its path
+    isNotNil,
+    assocPath<number[], GameState>(['sols', source, 'path'], [destination])
+  )
 
 type TransitAccum = { state: GameState | undefined; disrupted: number[] }
 
@@ -51,28 +101,35 @@ type TransitWithArrival = Transit & {
   arrived: number
 }
 
+const addArrivalTime = (speed: number) =>
+  map<Transit, TransitWithArrival>(
+    (transit: Transit): TransitWithArrival =>
+      assoc(
+        'arrived',
+        transit.departed + speed * distance(...coordinates(transit.source), ...coordinates(transit.destination)) * 1000,
+        transit
+      )
+  )
+
+const removeArrivalTime = map<TransitWithArrival, Transit>(dissoc('arrived'))
+
+const filterArrivedTransits = (time: number): ((batch: TransitWithArrival[]) => TransitWithArrival[]) =>
+  filter<TransitWithArrival>((transit: TransitWithArrival) => transit.arrived <= time + 1)
+
 export const arriveTransits =
   (time: number): StateReducer =>
   (state) => {
     if (state === undefined) return undefined
     const arrivedTransits: Transit[] = pipe(
       //
-      map<Transit, TransitWithArrival>((transit: Transit): TransitWithArrival => {
-        const [sx, sy] = coordinates(transit.source)
-        const [dx, dy] = coordinates(transit.destination)
-        const len = distance(sx, sy, dx, dy)
-        return {
-          ...transit,
-          arrived: transit.departed + state!.speed * len * 1000,
-        }
-      }),
-      filter<TransitWithArrival>((transit: TransitWithArrival) => transit.arrived <= time + 1) as (
-        arr: TransitWithArrival[]
-      ) => TransitWithArrival[],
+      addArrivalTime(state!.speed),
+      filterArrivedTransits(time),
       sortBy(prop('arrived')),
-      map<TransitWithArrival, Transit>(dissoc('arrived'))
+      removeArrivalTime
     )(state.transits)
+
     if (arrivedTransits.length === 0) return state
+
     const { state: newState } = reduce(
       (accum: TransitAccum, transit: Transit) => {
         const { state, disrupted } = accum
@@ -92,6 +149,7 @@ export const arriveTransits =
           {
             state: pipe(
               setSolToOwner(destination, srcOwner),
+              truncateSupplyLinesNotFriendlyThrough(srcOwner, destination),
               extendOtherSolPaths(source, destination),
               extendSourceToDestination(source, destination)
             ),

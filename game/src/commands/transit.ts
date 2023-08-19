@@ -47,7 +47,6 @@ const truncatePaths =
         if (!includes(source, sol.path)) return sol
         dirty = true
         const newPath = append(source, nth(0, splitWhen(equals(source), sol.path))!)
-        // const truncatedPath = nth(0, splitAt(-1, newPath)) ?? []
         return assoc<'path', Sol>('path', newPath, sol)
       }, state.sols),
       state

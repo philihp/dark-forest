@@ -1,6 +1,6 @@
 import { compose, when } from 'ramda'
 import { initialState } from '../../state'
-import { Sol } from '../../types'
+import { GameState, Sol } from '../../types'
 import { transit } from '../transit'
 
 describe('commands/transit', () => {
@@ -194,5 +194,53 @@ describe('commands/transit', () => {
     expect(s2).toMatchObject({
       transits: [],
     })
+  })
+
+  it('cutting off a supply line', () => {
+    const s1 = {
+      ...initialState,
+      sols: [
+        { owner: 0, path: [1, 2, 3, 4] }, // zero
+        { owner: 0, path: [2, 3, 4] }, // zero
+        { owner: 0, path: [3, 4] }, // zero
+        { owner: 0, path: [4] }, // zero
+        { owner: 0, path: [] }, // force of strength five at sol 4
+        { owner: 1, path: [] }, // force of strength one at sol 5
+      ],
+      transits: [{ departed: 0, source: 5, destination: 2 }],
+    }
+    const s2 = transit({ time: 15000, player: 0, source: 4, destination: 5 })(s1)!
+    expect(s2.sols).toStrictEqual([
+      { owner: 0, path: [1] }, // zero
+      { owner: 0, path: [] }, // zero
+      { owner: 1, path: [] }, // zero
+      { owner: 0, path: [4] }, // zero
+      { owner: 0, path: [] }, // force of strength five at sol 4
+      { owner: 1, path: [2] }, // force of strength one at sol 5
+    ])
+  })
+
+  it('does not cut its own supply line', () => {
+    const s1 = {
+      ...initialState,
+      sols: [
+        { owner: 0, path: [] }, // one
+        { owner: 0, path: [2, 3, 4] }, // zero
+        { owner: 0, path: [3, 4] }, // zero
+        { owner: 0, path: [4] }, // zero
+        { owner: 0, path: [] }, // force of strength five at sol 4
+        { owner: 1, path: [] }, // force of strength one at sol 5
+      ],
+      transits: [{ departed: 0, source: 0, destination: 2 }],
+    }
+    const s2 = transit({ time: 15000, player: 0, source: 4, destination: 5 })(s1)!
+    expect(s2.sols).toStrictEqual([
+      { owner: 0, path: [2] },
+      { owner: 0, path: [2, 3, 4] },
+      { owner: 0, path: [3, 4] },
+      { owner: 0, path: [4] },
+      { owner: 0, path: [] },
+      { owner: 1, path: [] },
+    ])
   })
 })
