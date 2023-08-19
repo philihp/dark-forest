@@ -154,6 +154,9 @@ const Game = () => {
       <HeaderUser />
       {connecting && <Loading />}
       <StartButton />
+      <button type="button" onClick={() => setDebug(!debug)}>
+        Debug
+      </button>
       {debug && (
         <>
           <pre>{state?.sols.map((sol) => JSON.stringify(sol)).join('\n')}</pre>
