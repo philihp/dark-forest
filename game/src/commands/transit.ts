@@ -13,6 +13,7 @@ const addTransitDeparture =
   (departed: number, source: number, destination: number): StateReducer =>
   (state) => {
     if (state === undefined) return undefined
+    if (source === destination) return assocPath(['sols', source, 'path'], [], state)
     return {
       ...state,
       transits: [

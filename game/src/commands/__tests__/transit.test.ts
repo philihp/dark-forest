@@ -172,4 +172,27 @@ describe('commands/transit', () => {
       ],
     })
   })
+
+  it('clears path by setting source to destination', () => {
+    const s1 = {
+      ...initialState,
+      sols: [
+        { owner: 0, path: [1, 2, 3] },
+        { owner: 0, path: [2, 3] },
+        { owner: 0, path: [3] },
+        { owner: 0, path: [] },
+        { owner: 1, path: [] },
+      ],
+      transits: [],
+    }
+    const s2 = transit({ time: 444, player: 0, source: 0, destination: 0 })(s1)!
+    expect(s2.sols[0].path).toStrictEqual([])
+    expect(s2.sols[1].path).toStrictEqual([2, 3])
+    expect(s2.sols[2].path).toStrictEqual([3])
+    expect(s2.sols[3].path).toStrictEqual([])
+    expect(s2.sols[4].path).toStrictEqual([])
+    expect(s2).toMatchObject({
+      transits: [],
+    })
+  })
 })

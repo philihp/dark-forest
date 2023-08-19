@@ -66,7 +66,7 @@ export const arriveTransits =
           arrived: transit.departed + state!.speed * len * 1000,
         }
       }),
-      filter<TransitWithArrival>((transit: TransitWithArrival) => transit.arrived < time) as (
+      filter<TransitWithArrival>((transit: TransitWithArrival) => transit.arrived <= time + 1) as (
         arr: TransitWithArrival[]
       ) => TransitWithArrival[],
       sortBy(prop('arrived')),
