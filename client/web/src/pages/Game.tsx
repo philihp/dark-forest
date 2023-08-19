@@ -23,6 +23,7 @@ const Game = () => {
   const { gameId } = useParams()
   const { connecting, state, move } = useHathoraContext()
   const [selected, setSelected] = useState<number[]>([])
+  const [debug, setDebug] = useState<boolean>(false)
   useAutoConnect(gameId)
 
   const nodes = state?.sols ?? []
@@ -153,20 +154,24 @@ const Game = () => {
       <HeaderUser />
       {connecting && <Loading />}
       <StartButton />
-      <pre>{state?.sols.map((sol) => JSON.stringify(sol)).join('\n')}</pre>
-      <pre>
-        {JSON.stringify(
-          pipe(
-            //
-            dissoc('users'),
-            dissoc('me'),
-            dissoc('sols'),
-            assoc('selected', selected)
-          )(state!),
-          undefined,
-          2
-        )}
-      </pre>
+      {debug && (
+        <>
+          <pre>{state?.sols.map((sol) => JSON.stringify(sol)).join('\n')}</pre>
+          <pre>
+            {JSON.stringify(
+              pipe(
+                //
+                dissoc('users'),
+                dissoc('me'),
+                dissoc('sols'),
+                assoc('selected', selected)
+              )(state!),
+              undefined,
+              2
+            )}
+          </pre>
+        </>
+      )}
     </>
   )
 }
