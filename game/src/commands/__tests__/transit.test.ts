@@ -133,14 +133,14 @@ describe('commands/transit', () => {
       ],
       transits: [],
     }
-    const s2 = transit({ time: 0, player: 0, source: 2, destination: 4 })(s1)!
-    expect(s2.sols[0].path).toStrictEqual([1, 2])
-    expect(s2.sols[1].path).toStrictEqual([2])
+    const s2 = transit({ time: 0, player: 0, source: 1, destination: 4 })(s1)!
+    expect(s2.sols[0].path).toStrictEqual([1])
+    expect(s2.sols[1].path).toStrictEqual([])
     expect(s2.sols[2].path).toStrictEqual([3])
     expect(s2.sols[3].path).toStrictEqual([])
     expect(s2.sols[4].path).toStrictEqual([])
     expect(s2).toMatchObject({
-      transits: [{ departed: 0, destination: 4, source: 2 }],
+      transits: [{ departed: 0, source: 1, destination: 4 }],
     })
   })
 })
