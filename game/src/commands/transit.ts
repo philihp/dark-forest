@@ -1,5 +1,5 @@
-import { pipe } from 'ramda'
-import { GameCommandTransitParams, StateReducer } from '../types'
+import { append, assoc, equals, includes, map, nth, pipe, splitAt, splitWhen } from 'ramda'
+import { GameCommandTransitParams, Sol, StateReducer } from '../types'
 import { tick } from './tick'
 
 const checkPlayerOwner =
@@ -12,7 +12,7 @@ const checkPlayerOwner =
 const addTransitDeparture =
   (departed: number, source: number, destination: number): StateReducer =>
   (state) => {
-    if (state === undefined) return state
+    if (state === undefined) return undefined
     return {
       ...state,
       transits: [
@@ -26,10 +26,30 @@ const addTransitDeparture =
     }
   }
 
+const truncatePaths =
+  (source: number): StateReducer =>
+  (state) => {
+    if (state === undefined) return undefined
+    let dirty = false
+    const newState = assoc(
+      'sols',
+      map((sol): Sol => {
+        if (!includes(source, sol.path)) return sol
+        dirty = true
+        const newPath = append(source, nth(0, splitWhen(equals(source), sol.path)) ?? [])
+        // const truncatedPath = nth(0, splitAt(-1, newPath)) ?? []
+        return assoc<'path', Sol>('path', newPath, sol)
+      }, state.sols),
+      state
+    )
+    return dirty ? newState : state
+  }
+
 export const transit = ({ player, time, source, destination }: GameCommandTransitParams): StateReducer =>
   pipe(
     //
     tick({ time }),
     checkPlayerOwner(player, source),
+    truncatePaths(source),
     addTransitDeparture(time, source, destination)
   )
