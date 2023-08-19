@@ -63,14 +63,14 @@ describe('commands/transit', () => {
       ],
       transits: [
         { departed: 10000, source: 1, destination: 0 },
-        { departed: 10001, source: 2, destination: 4 },
+        { departed: 10001, source: 3, destination: 4 },
         { departed: 10002, source: 4, destination: 1 },
       ],
     }
     const s2 = transit({ player: 0, source: 2, destination: 1, time: 20000 })(s1)!
 
     expect(s2?.transits).toStrictEqual([
-      { departed: 10001, source: 2, destination: 4 },
+      { departed: 10001, source: 3, destination: 4 },
       { departed: 20000, source: 2, destination: 1 },
     ])
   })
@@ -141,6 +141,35 @@ describe('commands/transit', () => {
     expect(s2.sols[4].path).toStrictEqual([])
     expect(s2).toMatchObject({
       transits: [{ departed: 0, source: 1, destination: 4 }],
+    })
+  })
+
+  it('clears existing transits from source', () => {
+    const s1 = {
+      ...initialState,
+      sols: [
+        { owner: 0, path: [1, 2, 3] },
+        { owner: 0, path: [2, 3] },
+        { owner: 0, path: [3] },
+        { owner: 0, path: [] },
+        { owner: 1, path: [] },
+      ],
+      transits: [
+        { departed: 10, source: 2, destination: 3 },
+        { departed: 20, source: 1, destination: 4 },
+      ],
+    }
+    const s2 = transit({ time: 30, player: 0, source: 1, destination: 3 })(s1)!
+    expect(s2.sols[0].path).toStrictEqual([1])
+    expect(s2.sols[1].path).toStrictEqual([])
+    expect(s2.sols[2].path).toStrictEqual([3])
+    expect(s2.sols[3].path).toStrictEqual([])
+    expect(s2.sols[4].path).toStrictEqual([])
+    expect(s2).toMatchObject({
+      transits: [
+        { departed: 10, source: 2, destination: 3 },
+        { departed: 30, source: 1, destination: 3 },
+      ],
     })
   })
 })
