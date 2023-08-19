@@ -1,4 +1,4 @@
-import { assoc, equals, filter, find, findIndex, map, pathSatisfies, propEq, propSatisfies, when } from 'ramda';
+import { find, findIndex, map,  propEq,  } from 'ramda';
 import { Methods, Context } from "./.hathora/methods";
 import { Response } from "../api/base";
 import {
@@ -9,12 +9,11 @@ import {
   IJoinRequest,
   IMoveRequest,
   EngineSol,
-  EngineTransit,
 } from "../api/types";
 import {
   reducer, initialState, GameState
 } from 'dark-forest-game';
-import { Sol, Transit } from 'dark-forest-game/dist/types';
+import { Sol } from 'dark-forest-game/dist/types';
 
 type InternalUser = {
   id: UserId

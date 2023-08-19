@@ -1,6 +1,6 @@
 import { createPcg32 } from 'fn-pcg'
 import { map, range } from 'ramda'
-import { GameCommandStartParams, GameState, Sol, StateReducer } from '../types'
+import { GameCommandStartParams, Sol, StateReducer } from '../types'
 
 // we could get more entropy with a second seed, but
 // honestly this is fine for now.

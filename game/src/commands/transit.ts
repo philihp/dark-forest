@@ -1,4 +1,4 @@
-import { append, assoc, assocPath, equals, includes, map, nth, pipe, reject, splitAt, splitWhen } from 'ramda'
+import { append, assoc, assocPath, equals, includes, map, nth, pipe, reject, splitWhen } from 'ramda'
 import { GameCommandTransitParams, Sol, StateReducer, Transit } from '../types'
 import { tick } from './tick'
 

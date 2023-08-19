@@ -1,6 +1,4 @@
-import { compose, when } from 'ramda'
 import { initialState } from '../../state'
-import { GameState, Sol } from '../../types'
 import { transit } from '../transit'
 
 describe('commands/transit', () => {
