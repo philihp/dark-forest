@@ -1,6 +1,12 @@
-import { append, assoc, assocPath, dissoc, filter, map, prop, reduce, sortBy } from 'ramda'
+import { append, assoc, assocPath, count, dissoc, evolve, filter, map, pipe, prop, reduce, sortBy } from 'ramda'
 import { GameState, Sol, StateReducer, Transit } from '../../types'
 import { coordinates, distance } from '../../math'
+
+const strength =
+  (sol: number) =>
+  (state?: GameState): number =>
+    count((thisSol: Sol): boolean => thisSol.path[thisSol.path.length - 1] === sol, state!.sols) +
+    (state?.sols[sol].owner !== undefined ? 1 : 0)
 
 const setSolToOwner =
   (destination: number, owner?: number): StateReducer =>
@@ -49,8 +55,9 @@ export const arriveTransits =
   (time: number): StateReducer =>
   (state) => {
     if (state === undefined) return undefined
-    const transitsWithArrival: TransitWithArrival[] = map<Transit, TransitWithArrival>(
-      (transit: Transit): TransitWithArrival => {
+    const arrivedTransits: Transit[] = pipe(
+      //
+      map<Transit, TransitWithArrival>((transit: Transit): TransitWithArrival => {
         const [sx, sy] = coordinates(transit.source)
         const [dx, dy] = coordinates(transit.destination)
         const len = distance(sx, sy, dx, dy)
@@ -58,36 +65,40 @@ export const arriveTransits =
           ...transit,
           arrived: transit.departed + state!.speed * len * 1000,
         }
-      },
-      state.transits
-    )
-    const arrivedTransitsWithArrival: TransitWithArrival[] = filter<TransitWithArrival, TransitWithArrival[]>(
-      (transit: TransitWithArrival) => transit.arrived < time,
-      transitsWithArrival
-    )
-    const sortedArrivedTransits: TransitWithArrival[] = sortBy(prop('arrived'), arrivedTransitsWithArrival)
-    const arrivedTransits: Transit[] = map<TransitWithArrival, Transit>(dissoc('arrived'), sortedArrivedTransits)
-
+      }),
+      filter<TransitWithArrival>((transit: TransitWithArrival) => transit.arrived < time) as (
+        arr: TransitWithArrival[]
+      ) => TransitWithArrival[],
+      sortBy(prop('arrived')),
+      map<TransitWithArrival, Transit>(dissoc('arrived'))
+    )(state.transits)
     if (arrivedTransits.length === 0) return state
-
     const { state: newState } = reduce(
       (accum: TransitAccum, transit: Transit) => {
         const { state, disrupted } = accum
         const { destination, source } = transit
-        const src = state?.sols?.[source]
-        // const dst = state?.sols?.[destination]
         if (disrupted.includes(source)) return accum
-        // could be use to use R.evolve here
 
-        const s0 = state
-        const s1 = setSolToOwner(destination, src?.owner)(s0)
-        const s2 = extendOtherSolPaths(source, destination)(s1)
-        const s3 = extendSourceToDestination(source, destination)(s2)
-        const newState = s3
-        return {
-          state: newState,
-          disrupted: [...disrupted, destination],
-        }
+        const srcOwner = state?.sols?.[source]?.owner
+        const dstOwner = state?.sols?.[destination]?.owner
+        const srcStrength = strength(source)(state)
+        const dstStrength = strength(destination)(state)
+
+        // landing force must overpower to displace
+        if (srcOwner !== dstOwner && srcStrength <= dstStrength) return accum
+
+        // the transit lands at the destination
+        return evolve(
+          {
+            state: pipe(
+              setSolToOwner(destination, srcOwner),
+              extendOtherSolPaths(source, destination),
+              extendSourceToDestination(source, destination)
+            ),
+            disrupted: append(destination),
+          },
+          accum
+        )
       },
       { state, disrupted: [] } as TransitAccum,
       arrivedTransits

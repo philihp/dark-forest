@@ -75,7 +75,7 @@ describe('commands/tick', () => {
       ...initialState,
       sols: [
         { owner: 0, path: [] },
-        { owner: 0, path: [] },
+        { owner: 0, path: [0] },
         { owner: 0, path: [] },
         { owner: 1, path: [] },
         { owner: 1, path: [] },
@@ -97,7 +97,7 @@ describe('commands/tick', () => {
     ])
     expect(s2.sols).toStrictEqual([
       { owner: 0, path: [3] },
-      { owner: 0, path: [] },
+      { owner: 0, path: [0, 3] },
       { owner: 0, path: [] },
       { owner: 0, path: [] },
       { owner: 1, path: [] },
@@ -110,7 +110,7 @@ describe('commands/tick', () => {
       ...initialState,
       sols: [
         { owner: 0, path: [] },
-        { owner: 0, path: [] },
+        { owner: 0, path: [0] },
         { owner: 0, path: [] },
         { owner: 1, path: [] },
         { owner: 1, path: [] },
@@ -132,7 +132,7 @@ describe('commands/tick', () => {
     ])
     expect(s2.sols).toStrictEqual([
       { owner: 0, path: [3] },
-      { owner: 0, path: [] },
+      { owner: 0, path: [0, 3] },
       { owner: 0, path: [] },
       { owner: 0, path: [] },
       { owner: 1, path: [] },
