@@ -2,7 +2,6 @@ import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { GoogleLogin } from '@react-oauth/google'
 import { useHathoraContext } from '../context/GameContext'
-import { HeaderUser } from '../components/HeaderUser'
 import { HathoraClient } from '../../../.hathora/client'
 
 const Home = () => {
@@ -17,7 +16,7 @@ const Home = () => {
   }, [setLobbies, getPublicLobbies])
 
   return (
-    <>
+    <div style={{ padding: 15 }}>
       {!user && (
         <GoogleLogin
           auto_select
@@ -28,7 +27,12 @@ const Home = () => {
         />
       )}
       <h1>Dark Forest</h1>
-      <h3>Public Servers</h3>
+      <p>
+        A abstract, browser-based, real time strategy game for up to 8 players, based in the{' '}
+        <a href="https://en.wikipedia.org/wiki/The_Three-Body_Problem_(novel)">Three Body</a> universe. You are not
+        alone.
+      </p>
+      {/* <h3>Public Servers</h3>
       <table border={1} cellPadding={3} cellSpacing={0}>
         <thead>
           <tr>
@@ -77,21 +81,25 @@ const Home = () => {
         }}
       >
         Create Public Server
-      </button>
-      <h3>Private Servers</h3>
-      <button
-        disabled={!user}
-        type="button"
-        onClick={async () => {
-          const roomId = await createPrivateLobby()
-          navigate(`/game/${roomId}`)
-        }}
-      >
-        Create Private Lobby
-      </button>
+      </button> */}
+      <p>Ready to play?</p>
+      <p>
+        <button
+          disabled={!user}
+          type="button"
+          onClick={async () => {
+            const roomId = await createPrivateLobby()
+            navigate(`/game/${roomId}`)
+          }}
+        >
+          Create Server
+        </button>
+      </p>
+      <br />
+      <br />
       <hr />
       Dark Forest, made with ♥ in San Francisco.
-    </>
+    </div>
   )
 }
 

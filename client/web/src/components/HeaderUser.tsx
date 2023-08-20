@@ -11,14 +11,10 @@ export const HeaderUser = () => {
         flexDirection: 'column',
       }}
     >
-      {!user && (
-        <GoogleLogin
-          auto_select
-          onSuccess={login}
-          onError={() => {
-            console.log('Login Failed')
-          }}
-        />
+      {!users?.length ? (
+        <p>The universe is quiet. As far as you know, you are alone.</p>
+      ) : (
+        <p>Your radio telescopes receive signals from the distant civilizations.</p>
       )}
       {users.map((u) => (
         <div
@@ -45,24 +41,21 @@ export const HeaderUser = () => {
       ))}
       {me === undefined && (
         <div>
-          <div
-            style={{
-              display: 'flex',
-            }}
-          >
-            You are watching the game as a spectator.
+          <hr />
+          <div>
+            <p>No one else in the universe knows you exist, and you prefer to keep it that way.</p>
             <button
               type="button"
               style={{
                 minHeight: 32,
-                minWidth: 100,
+                minWidth: 200,
                 backgroundColor: '#ccc',
                 borderRadius: 32,
                 borderWidth: 0,
               }}
               onClick={join}
             >
-              Join
+              Broadcast existance
             </button>
           </div>
           <hr />

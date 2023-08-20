@@ -34,7 +34,14 @@ const SelectedSol = ({ n }: { n: number }) => {
           }}
         />
       )}
-      Strength: {str}
+      <h4>
+        Fleet strength: <span style={{ fontSize: 30 }}>{str}</span>
+      </h4>
+      <p>
+        Every system has a fleet strength of 1, but it may send its fleet strength to another fleet. In order to conquer
+        a system, a fleet must be sent with an overpowering strength; the defender wins on ties. Multiple stystems can
+        form a supply line, however losing any system along the route will immediately disrupt this strength.
+      </p>
     </div>
   )
 }
