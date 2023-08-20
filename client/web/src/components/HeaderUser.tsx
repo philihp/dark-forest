@@ -43,13 +43,14 @@ export const HeaderUser = () => {
         <div>
           <hr />
           <div>
-            <p>No one else in the universe knows you exist, and you prefer to keep it that way.</p>
+            <p>No one else in the universe knows you exist, maybe you should keep it that way?</p>
             <button
               type="button"
               style={{
                 minHeight: 32,
                 minWidth: 200,
-                backgroundColor: '#ccc',
+                backgroundColor: '#0d88ed',
+                color: 'white',
                 borderRadius: 32,
                 borderWidth: 0,
               }}

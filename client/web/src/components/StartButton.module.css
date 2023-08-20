@@ -1,0 +1,18 @@
+.textInput {
+  padding-left: 16px;
+  height: 32px;
+  width: 64px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #0d88ed;
+  background-color: #b3cde3;
+  border-radius: 32px 0 0 32px;
+}
+.submitButton {
+  width: 100px;
+  height: 32px;
+  background-color: #0d88ed;
+  color: white;
+  border-radius: 0 32px 32px 0;
+  border-width: 0;
+}

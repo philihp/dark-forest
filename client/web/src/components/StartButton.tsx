@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import classes from './StartButton.module.css'
 import { useHathoraContext } from '../context/GameContext'
 
 export const StartButton = () => {
@@ -13,8 +14,9 @@ export const StartButton = () => {
           const n = Number.parseInt(e.target.value, 10)
           if (!Number.isNaN(n) && n > 0 && n < 1000) setSize(n)
         }}
+        className={classes.textInput}
       />
-      <button type="button" onClick={() => move(`START ${size}`)}>
+      <button type="button" onClick={() => move(`START ${size}`)} className={classes.submitButton}>
         Start
       </button>
     </div>

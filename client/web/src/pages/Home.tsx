@@ -29,8 +29,7 @@ const Home = () => {
       <h1>Dark Forest</h1>
       <p>
         A abstract, browser-based, real time strategy game for up to 8 players, based in the{' '}
-        <a href="https://en.wikipedia.org/wiki/The_Three-Body_Problem_(novel)">Three Body</a> universe. You are not
-        alone.
+        <a href="https://amzn.to/45gaoJg">Three Body</a> universe. You are not alone.
       </p>
       {/* <h3>Public Servers</h3>
       <table border={1} cellPadding={3} cellSpacing={0}>
@@ -91,6 +90,14 @@ const Home = () => {
             const roomId = await createPrivateLobby()
             navigate(`/game/${roomId}`)
           }}
+          style={{
+            width: 100,
+            height: 32,
+            backgroundColor: '#0d88ed',
+            color: 'white',
+            borderRadius: 32,
+            borderWidth: 0,
+          }}
         >
           Create Server
         </button>
@@ -98,7 +105,7 @@ const Home = () => {
       <br />
       <br />
       <hr />
-      Dark Forest, made with ♥ in San Francisco.
+      <a href="https://github.com/philihp/dark-forest">Open source</a> with ♥ in San Francisco
     </div>
   )
 }
