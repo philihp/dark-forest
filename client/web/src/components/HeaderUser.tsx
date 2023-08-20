@@ -2,7 +2,7 @@ import { GoogleLogin } from '@react-oauth/google'
 import { useHathoraContext } from '../context/GameContext'
 
 export const HeaderUser = () => {
-  const { state: { users, me } = { users: [] }, user, state, login, join } = useHathoraContext()
+  const { state: { users, me } = { users: [] }, connecting, join } = useHathoraContext()
 
   return (
     <div
@@ -39,7 +39,7 @@ export const HeaderUser = () => {
           <div style={{ paddingLeft: 5, paddingRight: 10 }}>{u.name}</div>
         </div>
       ))}
-      {me === undefined && (
+      {me === undefined && !connecting && (
         <div>
           <hr />
           <div>
