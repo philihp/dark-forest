@@ -62,14 +62,12 @@ export class Impl implements Methods<InternalState> {
   move(state: InternalState, userId: UserId, ctx: Context, request: IMoveRequest): Response {
     const player = findIndex( (u) => u.id === userId, state.users)
     if(player === -1) {
-      console.log('User is not a player of this game.')
       return Response.error('User is not a player of this game.')
     }
 
     const params = [ `${ctx.time}`, `${player}`, ...request.command.split(/\s+/) ]
     const nextGame = reducer(params)(state.game)
     if(nextGame === undefined) {
-      console.log(`ERROR ${params}`)
       return Response.error(`ERROR ${params.join(' ')}`)
     }
     state.game = nextGame
@@ -77,16 +75,23 @@ export class Impl implements Methods<InternalState> {
   }
 
   getUserState(state: InternalState, userId: UserId): EngineState {
-    const users: EngineUser[] = state.users
-    const me = find(u => u.id === userId, state.users)
-    const playerIndex = findIndex(u => u.id === userId, state.users)
+    const users: EngineUser[] = map<InternalUser, EngineUser>(
+      (iu: InternalUser): EngineUser => {
+        const foundIndex = findIndex(u => u.id === userId, state.users)
+        return {
+          ...iu,
+          index: foundIndex !== -1 ? foundIndex : undefined
+        }
+      }
+      ,state.users)
+    const me = find(u => u.id === userId, users)
 
     return {
       users,
       me,
       sols: map<Sol, EngineSol>(
         (sol: Sol) => {
-          if(sol.owner === playerIndex) return sol
+          if(me && me?.index === sol.owner) return sol
           return {
             owner: sol.owner,
             path: []
@@ -95,7 +100,7 @@ export class Impl implements Methods<InternalState> {
         state.game.sols
       ),
       transits: state.game.transits.filter(
-        (transit) => state.game.sols[transit.source].owner === playerIndex
+        (transit) => me && me?.index === state?.game?.sols?.[transit.source]?.owner
       ),
     }
   }

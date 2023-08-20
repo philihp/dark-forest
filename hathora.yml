@@ -4,6 +4,7 @@ types:
     name: string
     picture: string
     color: string
+    index: int?
   EngineSol:
     owner: int?
     path: int[]

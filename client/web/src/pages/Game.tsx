@@ -22,6 +22,7 @@ const Game = () => {
   const { gameId } = useParams()
   const { state, move } = useHathoraContext()
   const [selected, setSelected] = useState<number[]>([])
+  const [hovered, setHovered] = useState<number | undefined>(undefined)
   useAutoConnect(gameId)
 
   const nodes = state?.sols ?? []
@@ -32,7 +33,7 @@ const Game = () => {
     if (e.shiftKey) return move(`SPAWN ${n}`)
     if (selected.includes(n)) {
       setSelected(reject(equals(n), selected))
-    } else {
+    } else if (state?.sols?.[n]?.owner !== undefined) {
       setSelected(append(n, selected))
     }
     return undefined
@@ -45,11 +46,17 @@ const Game = () => {
     return undefined
   }
 
+  const handleHover = (n: number) => (e: MouseEvent) => {
+    setHovered(n)
+  }
+
+  const SCALE = (0.107 * nodes.length) ** 0.458 / 3
+
   return (
     <div style={{ display: 'flex', padding: 0, margin: 0 }}>
       <LeftSidebar selected={selected} />
       <svg
-        viewBox="-50 -50 100 100" /* min-x min-y width height */
+        viewBox={`${-50 * SCALE} ${-50 * SCALE} ${100 * SCALE} ${100 * SCALE}`} /* min-x min-y width height */
         preserveAspectRatio="xMaxYMid meet"
         style={{
           width: '100vh',
@@ -66,13 +73,14 @@ const Game = () => {
               if (last(sol.path) !== n) return sum
               return sum + 1
             },
-            sol.path.length === 0 ? 1 : 0,
+            sol.owner !== undefined && sol.path.length === 0 ? 1 : 0,
             nodes
           )
           return (
             <circle
               onClick={handleLeftClick(n)}
               onContextMenu={handleRightClick(n)}
+              onMouseOver={handleHover(n)}
               // eslint-disable-next-line react/no-array-index-key
               key={`dot${n}`}
               cx={`${x}`}
@@ -145,13 +153,13 @@ const Game = () => {
                 strokeDasharray: len,
                 strokeLinejoin: 'round',
                 strokeDashoffset: len,
-                animation: `dash ${len}s cubic-bezier(0.33,0,0.67,1)`,
+                animation: `dash ${len}s ease-in-out`, // cubic-bezier(0.2,0,0.8,1)
               }}
             />
           )
         })}
       </svg>
-      <RightSidebar />
+      <RightSidebar hovered={hovered} />
     </div>
   )
 }

@@ -2,7 +2,7 @@ import { GoogleLogin } from '@react-oauth/google'
 import { useHathoraContext } from '../context/GameContext'
 
 export const HeaderUser = () => {
-  const { state: { users } = { users: [] }, user, state, login, join } = useHathoraContext()
+  const { state: { users, me } = { users: [] }, user, state, login, join } = useHathoraContext()
 
   return (
     <div
@@ -20,7 +20,6 @@ export const HeaderUser = () => {
           }}
         />
       )}
-      {/* <div style={{ display: 'flex' }}>{JSON.stringify({ user })}</div> */}
       {users.map((u) => (
         <div
           key={u.id}
@@ -44,28 +43,31 @@ export const HeaderUser = () => {
           <div style={{ paddingLeft: 5, paddingRight: 10 }}>{u.name}</div>
         </div>
       ))}
-      <div>
-        <div
-          style={{
-            display: 'flex',
-          }}
-        >
-          <button
-            type="button"
+      {me === undefined && (
+        <div>
+          <div
             style={{
-              minHeight: 32,
-              minWidth: 100,
-              backgroundColor: '#ccc',
-              borderRadius: 32,
-              borderWidth: 0,
+              display: 'flex',
             }}
-            onClick={join}
           >
-            Join
-          </button>
+            You are watching the game as a spectator.
+            <button
+              type="button"
+              style={{
+                minHeight: 32,
+                minWidth: 100,
+                backgroundColor: '#ccc',
+                borderRadius: 32,
+                borderWidth: 0,
+              }}
+              onClick={join}
+            >
+              Join
+            </button>
+          </div>
+          <hr />
         </div>
-        <hr />
-      </div>
+      )}
     </div>
   )
 }
