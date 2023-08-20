@@ -14,7 +14,7 @@ export const HeaderUser = () => {
       {!users?.length ? (
         <p>The universe is quiet. As far as you know, you are alone.</p>
       ) : (
-        <p>Your radio telescopes receive signals from the distant civilizations.</p>
+        <p>The night sky is a cacophany messages from these civilizations:</p>
       )}
       {users.map((u) => (
         <div

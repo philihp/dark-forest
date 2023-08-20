@@ -46,7 +46,7 @@ export const LeftSidebar = ({ selected }: Props) => {
                   <>
                     <p>
                       Your young civilization looks up for the first time. Cracks in the firmament show other stars,
-                      distant worlds ready for colonization. How many stars do you see?
+                      worlds ready for colonization. How many stars do you see?
                     </p>
                     <ul>
                       <li>10 - Quick</li>
