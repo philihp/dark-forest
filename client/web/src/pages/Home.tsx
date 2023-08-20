@@ -105,7 +105,7 @@ const Home = () => {
       <br />
       <br />
       <hr />
-      <a href="https://github.com/philihp/dark-forest">Open source</a> with ♥ in San Francisco
+      <a href="https://github.com/philihp/dark-forest">Open source</a> with ♥ from San Francisco
     </div>
   )
 }
