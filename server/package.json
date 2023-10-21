@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "type": "module",
   "devDependencies": {
-    "@types/ramda": "0.29.6",
+    "@types/ramda": "0.29.7",
     "typescript": "5.2.2"
   },
   "dependencies": {
