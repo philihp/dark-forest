@@ -10,7 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@react-oauth/google": "0.11.1",
+    "@react-oauth/google": "0.12.1",
     "dark-forest-game": "0.8.2",
     "fast-shuffle": "6.0.1",
     "pcg": "1.0.0",
